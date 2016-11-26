@@ -939,31 +939,66 @@
       </emu-clause>
     </emu-clause>
 
-    <!-- es6num="6.1.6" -->
-    <emu-clause id="sec-ecmascript-language-types-number-type">
-      <h1>The Number Type</h1>
-      <p>The Number type has exactly 18437736874454810627 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup>+3</emu-eqn>) values, representing the double-precision 64-bit format IEEE 754-2008 values as specified in the IEEE Standard for Binary Floating-Point Arithmetic, except that the 9007199254740990 (that is, <emu-eqn>2<sup>53</sup>-2</emu-eqn>) distinct &ldquo;Not-a-Number&rdquo; values of the IEEE Standard are represented in ECMAScript as a single special *NaN* value. (Note that the *NaN* value is produced by the program expression `NaN`.) In some implementations, external code might be able to detect a difference between various Not-a-Number values, but such behaviour is implementation-dependent; to ECMAScript code, all *NaN* values are indistinguishable from each other.</p>
+    <emu-clause id="sec-ecmascript-language-types-numeric-types">
+      <h1>Numeric Types</h1>
+      <p>ECMAScript has three built-in numeric types: Number, Int64, and Uint64. In this specification, every numeric type _T_ has an additive identity denoted _T_.zero and a multiplicative identity denoted _T_.one.</p>
+      <p>Because the numeric types are in general not interconvertible without loss of precision or truncation, the ECMAScript language provides no implicit conversion among these types. Programmers must explicitly call `Number`, `Int64`, and `Uint64` functions passing parameters of other types.</p>
       <emu-note>
-        <p>The bit pattern that might be observed in an ArrayBuffer (see <emu-xref href="#sec-arraybuffer-objects"></emu-xref>) after a Number value has been stored into it is not necessarily the same as the internal representation of that Number value used by the ECMAScript implementation.</p>
+        <p>The first and subsequent editions of ECMAScript have provided implicit numeric conversions for some operators that could lose precision or truncate. These legacy implicit conversions are maintained for backward compatibility, but not provided for Int64 or Uint64 in order to minimize opportunity for programmer error, and to leave open the option of generalized <em>value types</em> in a future edition.</p>
       </emu-note>
-      <p>There are two other special values, called *positive Infinity* and *negative Infinity*. For brevity, these values are also referred to for expository purposes by the symbols *+&infin;* and *-&infin;*, respectively. (Note that these two infinite Number values are produced by the program expressions `+Infinity` (or simply `Infinity`) and `-Infinity`.)</p>
-      <p>The other 18437736874454810624 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup></emu-eqn>) values are called the finite numbers. Half of these are positive numbers and half are negative numbers; for every finite positive Number value there is a corresponding negative value having the same magnitude.</p>
-      <p>Note that there is both a *positive zero* and a *negative zero*. For brevity, these values are also referred to for expository purposes by the symbols *+0* and *-0*, respectively. (Note that these two different zero Number values are produced by the program expressions `+0` (or simply `0`) and `-0`.)</p>
-      <p>The 18437736874454810622 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup>-2</emu-eqn>) finite nonzero values are of two kinds:</p>
-      <p>18428729675200069632 (that is, <emu-eqn>2<sup>64</sup>-2<sup>54</sup></emu-eqn>) of them are normalized, having the form</p>
-      <div class="math-display">
-        _s_ &times; _m_ &times; 2<sup>_e_</sup>
-      </div>
-      <p>where _s_ is +1 or -1, _m_ is a positive integer less than 2<sup>53</sup> but not less than 2<sup>52</sup>, and _e_ is an integer ranging from -1074 to 971, inclusive.</p>
-      <p>The remaining 9007199254740990 (that is, <emu-eqn>2<sup>53</sup>-2</emu-eqn>) values are denormalized, having the form</p>
-      <div class="math-display">
-        _s_ &times; _m_ &times; 2<sup>_e_</sup>
-      </div>
-      <p>where _s_ is +1 or -1, _m_ is a positive integer less than 2<sup>52</sup>, and _e_ is -1074.</p>
-      <p>Note that all the positive and negative integers whose magnitude is no greater than 2<sup>53</sup> are representable in the Number type (indeed, the integer 0 has two representations, *+0* and *-0*).</p>
-      <p>A finite number has an <em>odd significand</em> if it is nonzero and the integer _m_ used to express it (in one of the two forms shown above) is odd. Otherwise, it has an <em>even significand</em>.</p>
-      <p>In this specification, the phrase &ldquo;the Number value for _x_&rdquo; where _x_ represents an exact nonzero real mathematical quantity (which might even be an irrational number such as &pi;) means a Number value chosen in the following manner. Consider the set of all finite values of the Number type, with *-0* removed and with two additional values added to it that are not representable in the Number type, namely 2<sup>1024</sup> (which is <emu-eqn>+1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>) and <emu-eqn>-2<sup>1024</sup></emu-eqn> (which is <emu-eqn>-1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>). Choose the member of this set that is closest in value to _x_. If two values of the set are equally close, then the one with an even significand is chosen; for this purpose, the two extra values 2<sup>1024</sup> and <emu-eqn>-2<sup>1024</sup></emu-eqn> are considered to have even significands. Finally, if 2<sup>1024</sup> was chosen, replace it with *+&infin;*; if <emu-eqn>-2<sup>1024</sup></emu-eqn> was chosen, replace it with *-&infin;*; if *+0* was chosen, replace it with *-0* if and only if _x_ is less than zero; any other chosen value is used unchanged. The result is the Number value for _x_. (This procedure corresponds exactly to the behaviour of the IEEE 754-2008 &ldquo;round to nearest, ties to even&rdquo; mode.)</p>
-      <p>Some ECMAScript operators deal only with integers in specific ranges such as <emu-eqn>-2<sup>31</sup></emu-eqn> through <emu-eqn>2<sup>31</sup>-1</emu-eqn>, inclusive, or in the range 0 through <emu-eqn>2<sup>16</sup>-1</emu-eqn>, inclusive. These operators accept any value of the Number type but first convert each such value to an integer value in the expected range. See the descriptions of the numeric conversion operations in <emu-xref href="#sec-type-conversion"></emu-xref>.</p>
+
+      <!-- es6num="6.1.6" -->
+      <emu-clause id="sec-ecmascript-language-types-number-type">
+	<h1>The Number Type</h1>
+	<p>The Number type has exactly 18437736874454810627 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup>+3</emu-eqn>) values, representing the double-precision 64-bit format IEEE 754-2008 values as specified in the IEEE Standard for Binary Floating-Point Arithmetic, except that the 9007199254740990 (that is, <emu-eqn>2<sup>53</sup>-2</emu-eqn>) distinct &ldquo;Not-a-Number&rdquo; values of the IEEE Standard are represented in ECMAScript as a single special *NaN* value. (Note that the *NaN* value is produced by the program expression `NaN`.) In some implementations, external code might be able to detect a difference between various Not-a-Number values, but such behaviour is implementation-dependent; to ECMAScript code, all *NaN* values are indistinguishable from each other.</p>
+	<emu-note>
+	  <p>The bit pattern that might be observed in an ArrayBuffer (see <emu-xref href="#sec-arraybuffer-objects"></emu-xref>) after a Number value has been stored into it is not necessarily the same as the internal representation of that Number value used by the ECMAScript implementation.</p>
+	</emu-note>
+	<p>There are two other special values, called *positive Infinity* and *negative Infinity*. For brevity, these values are also referred to for expository purposes by the symbols *+&infin;* and *-&infin;*, respectively. (Note that these two infinite Number values are produced by the program expressions `+Infinity` (or simply `Infinity`) and `-Infinity`.)</p>
+	<p>The other 18437736874454810624 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup></emu-eqn>) values are called the finite numbers. Half of these are positive numbers and half are negative numbers; for every finite positive Number value there is a corresponding negative value having the same magnitude.</p>
+	<p>Note that there is both a *positive zero* and a *negative zero*. For brevity, these values are also referred to for expository purposes by the symbols *+0* and *-0*, respectively. (Note that these two different zero Number values are produced by the program expressions `+0` (or simply `0`) and `-0`.)</p>
+	<p>The 18437736874454810622 (that is, <emu-eqn>2<sup>64</sup>-2<sup>53</sup>-2</emu-eqn>) finite nonzero values are of two kinds:</p>
+	<p>18428729675200069632 (that is, <emu-eqn>2<sup>64</sup>-2<sup>54</sup></emu-eqn>) of them are normalized, having the form</p>
+	<div class="math-display">
+	  _s_ &times; _m_ &times; 2<sup>_e_</sup>
+	</div>
+	<p>where _s_ is +1 or -1, _m_ is a positive integer less than 2<sup>53</sup> but not less than 2<sup>52</sup>, and _e_ is an integer ranging from -1074 to 971, inclusive.</p>
+	<p>The remaining 9007199254740990 (that is, <emu-eqn>2<sup>53</sup>-2</emu-eqn>) values are denormalized, having the form</p>
+	<div class="math-display">
+	  _s_ &times; _m_ &times; 2<sup>_e_</sup>
+	</div>
+	<p>where _s_ is +1 or -1, _m_ is a positive integer less than 2<sup>52</sup>, and _e_ is -1074.</p>
+	<p>Note that all the positive and negative integers whose magnitude is no greater than 2<sup>53</sup> are representable in the Number type (indeed, the integer 0 has two representations, *+0* and *-0*).</p>
+	<p>A finite number has an <em>odd significand</em> if it is nonzero and the integer _m_ used to express it (in one of the two forms shown above) is odd. Otherwise, it has an <em>even significand</em>.</p>
+	<p>In this specification, the phrase &ldquo;the Number value for _x_&rdquo; where _x_ represents an exact nonzero real mathematical quantity (which might even be an irrational number such as &pi;) means a Number value chosen in the following manner. Consider the set of all finite values of the Number type, with *-0* removed and with two additional values added to it that are not representable in the Number type, namely 2<sup>1024</sup> (which is <emu-eqn>+1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>) and <emu-eqn>-2<sup>1024</sup></emu-eqn> (which is <emu-eqn>-1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>). Choose the member of this set that is closest in value to _x_. If two values of the set are equally close, then the one with an even significand is chosen; for this purpose, the two extra values 2<sup>1024</sup> and <emu-eqn>-2<sup>1024</sup></emu-eqn> are considered to have even significands. Finally, if 2<sup>1024</sup> was chosen, replace it with *+&infin;*; if <emu-eqn>-2<sup>1024</sup></emu-eqn> was chosen, replace it with *-&infin;*; if *+0* was chosen, replace it with *-0* if and only if _x_ is less than zero; any other chosen value is used unchanged. The result is the Number value for _x_. (This procedure corresponds exactly to the behaviour of the IEEE 754-2008 &ldquo;round to nearest, ties to even&rdquo; mode.)</p>
+	<p>Some ECMAScript operators deal only with integers in specific ranges such as <emu-eqn>-2<sup>31</sup></emu-eqn> through <emu-eqn>2<sup>31</sup>-1</emu-eqn>, inclusive, or in the range 0 through <emu-eqn>2<sup>16</sup>-1</emu-eqn>, inclusive. These operators accept any value of the Number type but first convert each such value to an integer value in the expected range. See the descriptions of the numeric conversion operations in <emu-xref href="#sec-type-conversion"></emu-xref>.</p>
+	<p>The Type(Number).zero value is *+0*.</p>
+	<p>The Type(Number).one value is *1*.</p>
+      </emu-clause>
+
+      <emu-clause id="sec-ecmascript-language-types-int64-type">
+	<h1>The Int64 Type</h1>
+	<p>The Int64 type has exactly 18446744073709551616 (that is, <emu-eqn>2<sup>64</sup></emu-eqn>) values, representing the signed 64-bit integer values from -9223372036854775808 to 9223372036854775807.</p>
+	<p>Note that all Int64 values of the form</p>
+	<div class="math-display">
+	  _s_ &times; _m_ &times; 2<sup>_e_</sup>
+	</div>
+	<p>where _s_ is +1 or -1, _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Int64 type. -9223372036854775808 can also be represented by the Int64 type.</p>
+	<p>The Type(Int64).zero value is *0L*.</p>
+	<p>The Type(Int64).one value is *1L*.</p>
+      </emu-clause>
+
+      <emu-clause id="sec-ecmascript-language-types-uint64-type">
+	<h1>The Uint64 Type</h1>
+	<p>The Uint64 type has exactly 18446744073709551616 (that is, <emu-eqn>2<sup>64</sup></emu-eqn>) values, representing the unsigned 64-bit integer values from 0 to 18446744073709551615.</p>
+	<p>Note that all Uint64 values of the form</p>
+	<div class="math-display">
+	  _m_ &times; 2<sup>_e_</sup>
+	</div>
+	<p>where _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Uint64 type.</p>
+	<p>The Type(Uint64).zero value is *0UL*.</p>
+	<p>The Type(Uint64).one value is *1UL*.</p>
+      </emu-clause>
     </emu-clause>
 
     <!-- es6num="6.1.7" -->
@@ -3016,6 +3051,9 @@
   <emu-clause id="sec-type-conversion">
     <h1>Type Conversion</h1>
     <p>The ECMAScript language implicitly performs automatic type conversion as needed. To clarify the semantics of certain constructs it is useful to define a set of conversion abstract operations. The conversion abstract operations are polymorphic; they can accept a value of any ECMAScript language type. But no other specification types are used with these operations.</p>
+    <emu-note>
+      <p>The Int64 and Uint64 types have no implicit conversions in the ECMAScript language; programmers must call Int64 or Uint64 explicitly to convert values from other types.</p>
+    </emu-note>
 
     <!-- es6num="7.1.1" -->
     <emu-clause id="sec-toprimitive" aoid="ToPrimitive">
@@ -3059,6 +3097,23 @@
           <tr>
             <td>
               Number
+            </td>
+            <td>
+              Return _input_.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Int64
+            </td>
+            <td>
+              Return _input_.
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              Uint64
             </td>
             <td>
               Return _input_.
@@ -3177,6 +3232,22 @@
           </tr>
           <tr>
             <td>
+              Int64
+            </td>
+            <td>
+              Return *false* if _argument_ is *0*; otherwise return *true*.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Uint64
+            </td>
+            <td>
+              Return *false* if _argument_ is *0*; otherwise return *true*.
+            </td>
+          </tr>
+          <tr>
+            <td>
               String
             </td>
             <td>
@@ -3249,6 +3320,22 @@
             </td>
             <td>
               Return _argument_ (no conversion).
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Int64
+            </td>
+            <td>
+              Throw a *TypeError* exception.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Uint64
+            </td>
+            <td>
+              Throw a *TypeError* exception.
             </td>
           </tr>
           <tr>
@@ -3338,6 +3425,9 @@
             </li>
             <li>
               `Infinity` and `-Infinity` are recognized as a |StringNumericLiteral| but not as a |NumericLiteral|.
+            </li>
+            <li>
+              A |StringNumericLiteral| may not include a |NumericLiteralSuffix|.
             </li>
           </ul>
         </emu-note>
@@ -3620,6 +3710,22 @@
           </tr>
           <tr>
             <td>
+              Int64
+            </td>
+            <td>
+              See <emu-xref href="#sec-tostring-applied-to-the-int64-type"></emu-xref>.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Uint64
+            </td>
+            <td>
+              See <emu-xref href="#sec-tostring-applied-to-the-uint64-type"></emu-xref>.
+            </td>
+          </tr>
+          <tr>
+            <td>
               String
             </td>
             <td>
@@ -3694,6 +3800,24 @@
             <a href="http://netlib.sandia.gov/fp/g_fmt.c">http://netlib.sandia.gov/fp/g_fmt.c</a> and may also be found at the various `netlib` mirror sites.</p>
         </emu-note>
       </emu-clause>
+
+      <emu-clause id="sec-tostring-applied-to-the-int64-type" aoid="ToString Applied to the Int64 Type">
+        <h1>ToString Applied to the Int64 Type</h1>
+        <p>The abstract operation ToString converts an Int64 _i_ to String format as follows:</p>
+        <emu-alg>
+          1. If _i_ is *-9223372036854775808*, return the String `"-9223372036854775808L"`.
+          1. If _i_ is less than zero, return the String concatenation of the String `"-"` and ToString(-_i_).
+          1. Return the String consisting of the code units of the digits of the decimal representation of _i_, followed by the code unit 0x004C (LATIN CAPITAL LETTER L).
+        </emu-alg>
+      </emu-clause>
+
+      <emu-clause id="sec-tostring-applied-to-the-uint64-type" aoid="ToString Applied to the Uint64 Type">
+        <h1>ToString Applied to the Uint64 Type</h1>
+        <p>The abstract operation ToString converts a Uint64 _u_ to String format as follows:</p>
+        <emu-alg>
+          1. Return the String consisting of the code units of the digits of the decimal representation of _u_, followed by the code unit 0x0055 (LATIN CAPITAL LETTER U), followed by the code unit 0x004C (LATIN CAPITAL LETTER L).
+        </emu-alg>
+      </emu-clause>
     </emu-clause>
 
     <!-- es6num="7.1.13" -->
@@ -3741,6 +3865,22 @@
             </td>
             <td>
               Return a new Number object whose [[NumberData]] internal slot is set to _argument_. See <emu-xref href="#sec-number-objects"></emu-xref> for a description of Number objects.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Int64
+            </td>
+            <td>
+              Return a new Int64 object whose [[Int64Data]] internal slot is set to _argument_. See <emu-xref href="#sec-int64-objects"></emu-xref> for a description of Int64 objects.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Uint64
+            </td>
+            <td>
+              Return a new Uint64 object whose [[Uint64Data]] internal slot is set to _argument_. See <emu-xref href="#sec-uint64-objects"></emu-xref> for a description of Uint64 objects.
             </td>
           </tr>
           <tr>
@@ -3811,7 +3951,7 @@
 
     <emu-clause id="sec-toindex" aoid="ToIndex">
       <h1>ToIndex ( _value_ )</h1>
-      <p>The abstract operation ToIndex returns _value_ argument converted to a numeric value if it is a valid integer index value. This abstract operation functions as follows:</p>
+      <p>The abstract operation ToIndex returns _value_ converted to a numeric value if it is a valid integer index value. This abstract operation functions as follows:</p>
       <emu-alg>
         1. If _value_ is *undefined*, then
           1. Let _index_ be 0.
@@ -3821,6 +3961,15 @@
           1. Let _index_ be ! ToLength(_integerIndex_).
           1. If SameValueZero(_integerIndex_, _index_) is *false*, throw a *RangeError* exception.
         1. Return _index_.
+      </emu-alg>
+    </emu-clause>
+
+    <emu-clause id="sec-tonumeric" aoid="ToNumeric">
+      <h1>ToNumeric ( _value_ )</h1>
+      <p>The abstract operation ToNumeric returns _value_ converted to a numeric value of type Number, Int64, or Uint64. This abstract operation functions as follows:</p>
+      <emu-alg>
+        1. If Type(_value_) is Int64 or Uint64, return _value_.
+        1. Return ToNumber(_value_).
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -3871,6 +4020,22 @@
           <tr>
             <td>
               Number
+            </td>
+            <td>
+              Return _argument_.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Int64
+            </td>
+            <td>
+              Return _argument_.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Uint64
             </td>
             <td>
               Return _argument_.
@@ -9502,6 +9667,10 @@
       <h2>Syntax</h2>
       <emu-grammar>
         NumericLiteral ::
+          NumericLiteralBase
+          NumericLiteralBase NumericLiteralSuffix
+
+        NumericLiteralBase ::
           DecimalLiteral
           BinaryIntegerLiteral
           OctalIntegerLiteral
@@ -9569,6 +9738,9 @@
 
         HexDigit :: one of
           `0` `1` `2` `3` `4` `5` `6` `7` `8` `9` `a` `b` `c` `d` `e` `f` `A` `B` `C` `D` `E` `F`
+
+        NumericLiteralSuffix :: one of
+          `L` `UL`
       </emu-grammar>
       <p>The |SourceCharacter| immediately following a |NumericLiteral| must not be an |IdentifierStart| or |DecimalDigit|.</p>
       <emu-note>
@@ -9579,19 +9751,19 @@
       <!-- es6num="11.8.3.1" -->
       <emu-clause id="sec-static-semantics-mv">
         <h1>Static Semantics: MV</h1>
-        <p>A numeric literal stands for a value of the Number type. This value is determined in two steps: first, a mathematical value (MV) is derived from the literal; second, this mathematical value is rounded as described below.</p>
+        <p>A numeric literal stands for a value of one of the numeric types: Number, Int64, or Uint64. This value is determined in two steps: first, a mathematical value (MV) is derived from the literal; second, this mathematical value is checked and rounded as described below.</p>
         <ul>
           <li>
-            The MV of <emu-grammar>NumericLiteral :: DecimalLiteral</emu-grammar> is the MV of |DecimalLiteral|.
+            The MV of <emu-grammar>NumericLiteralBase :: DecimalLiteral</emu-grammar> is the MV of |DecimalLiteral|.
           </li>
           <li>
-            The MV of <emu-grammar>NumericLiteral :: BinaryIntegerLiteral</emu-grammar> is the MV of |BinaryIntegerLiteral|.
+            The MV of <emu-grammar>NumericLiteralBase :: BinaryIntegerLiteral</emu-grammar> is the MV of |BinaryIntegerLiteral|.
           </li>
           <li>
-            The MV of <emu-grammar>NumericLiteral :: OctalIntegerLiteral</emu-grammar> is the MV of |OctalIntegerLiteral|.
+            The MV of <emu-grammar>NumericLiteralBase :: OctalIntegerLiteral</emu-grammar> is the MV of |OctalIntegerLiteral|.
           </li>
           <li>
-            The MV of <emu-grammar>NumericLiteral :: HexIntegerLiteral</emu-grammar> is the MV of |HexIntegerLiteral|.
+            The MV of <emu-grammar>NumericLiteralBase :: HexIntegerLiteral</emu-grammar> is the MV of |HexIntegerLiteral|.
           </li>
           <li>
             The MV of <emu-grammar>DecimalLiteral :: DecimalIntegerLiteral `.`</emu-grammar> is the MV of |DecimalIntegerLiteral|.
@@ -9729,7 +9901,38 @@
             The MV of <emu-grammar>HexDigits :: HexDigits HexDigit</emu-grammar> is (the MV of |HexDigits| &times; 16) plus the MV of |HexDigit|.
           </li>
         </ul>
-        <p>Once the exact MV for a numeric literal has been determined, it is then rounded to a value of the Number type. If the MV is 0, then the rounded value is *+0*; otherwise, the rounded value must be the Number value for the MV (as specified in <emu-xref href="#sec-ecmascript-language-types-number-type"></emu-xref>), unless the literal is a |DecimalLiteral| and the literal has more than 20 significant digits, in which case the Number value may be either the Number value for the MV of a literal produced by replacing each significant digit after the 20th with a `0` digit or the Number value for the MV of a literal produced by replacing each significant digit after the 20th with a `0` digit and then incrementing the literal at the 20th significant digit position. A digit is <em>significant</em> if it is not part of an |ExponentPart| and</p>
+      </emu-clause>
+
+      <emu-clause id="sec-numeric-literal-static-semantics-early-errors">
+        <h1>Static Semantics: Early Errors</h1>
+        <emu-grammar>NumericLiteral :: NumericLiteralBase NumericLiteralSuffix</emu-grammar>
+        <ul>
+          <li>
+            It is a Syntax Error if the MV is not an integer.
+          </li>
+          <li>
+            If |NumericLiteralSuffix| is `L`, then it is a Syntax Error if the MV is less than -9223372036854775808 or greater than 9223372036854775807.
+          </li>
+          <li>
+            If |NumericLiteralSuffix| is `UL`, then it is a Syntax Error if the MV is is less than 0 or greater than 18446744073709551615.
+          </li>
+        </ul>
+      </emu-clause>
+
+      <emu-clause id="sec-numeric-literal-static-semantics-64-bit-integer-value">
+        <h1>Static Semantics: 64-bit Integer Value</h1>
+        <emu-grammar>NumericLiteral :: NumericLiteralBase NumericLiteralSuffix</emu-grammar>
+        <ul>
+          <li>
+	    Let the value of |NumericLiteral| be the MV of |NumericLiteralBase| represented as Int64 if |NumericLiteralSuffix| is `L` or Uint64 if |NumericLiteralSuffix| is `UL`.
+          </li>
+        </ul>
+      </emu-clause>
+
+      <emu-clause id="sec-numeric-literal-static-semantics-number-value">
+        <h1>Static Semantics: Number Value</h1>
+        <emu-grammar>NumericLiteral :: NumericLiteralBase</emu-grammar>
+        <p>The MV is rounded to a value of the Number type. If the MV is 0, then the rounded value is *+0*; otherwise, the rounded value must be the Number value for the MV (as specified in <emu-xref href="#sec-ecmascript-language-types-number-type"></emu-xref>), unless the literal is a |DecimalLiteral| and the literal has more than 20 significant digits, in which case the Number value may be either the Number value for the MV of a literal produced by replacing each significant digit after the 20th with a `0` digit or the Number value for the MV of a literal produced by replacing each significant digit after the 20th with a `0` digit and then incrementing the literal at the 20th significant digit position. A digit is <em>significant</em> if it is not part of an |ExponentPart| and</p>
         <ul>
           <li>
             it is not `0`; or
@@ -9738,6 +9941,7 @@
             there is a nonzero digit to its left and there is a nonzero digit, not in the |ExponentPart|, to its right.
           </li>
         </ul>
+        <p>Let the value of |NumericLiteral| be the rounded value of the MV.</p>
       </emu-clause>
     </emu-clause>
 
@@ -10867,7 +11071,7 @@
         </emu-alg>
         <emu-grammar>Literal : NumericLiteral</emu-grammar>
         <emu-alg>
-          1. Return the number whose value is MV of |NumericLiteral| as defined in <emu-xref href="#sec-literals-numeric-literals"></emu-xref>.
+          1. Return the value of |NumericLiteral| as defined in <emu-xref href="#sec-literals-numeric-literals"></emu-xref>.
         </emu-alg>
         <emu-grammar>Literal : StringLiteral</emu-grammar>
         <emu-alg>
@@ -12225,8 +12429,8 @@
         <emu-grammar>UpdateExpression : LeftHandSideExpression `++`</emu-grammar>
         <emu-alg>
           1. Let _lhs_ be the result of evaluating |LeftHandSideExpression|.
-          1. Let _oldValue_ be ? ToNumber(? GetValue(_lhs_)).
-          1. Let _newValue_ be the result of adding the value 1 to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _oldValue_ be ? ToNumeric(? GetValue(_lhs_)).
+          1. Let _newValue_ be the result of adding Type(_oldValue_).one to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_lhs_, _newValue_).
           1. Return _oldValue_.
         </emu-alg>
@@ -12243,8 +12447,8 @@
         <emu-grammar>UpdateExpression : LeftHandSideExpression `--`</emu-grammar>
         <emu-alg>
           1. Let _lhs_ be the result of evaluating |LeftHandSideExpression|.
-          1. Let _oldValue_ be ? ToNumber(? GetValue(_lhs_)).
-          1. Let _newValue_ be the result of subtracting the value 1 from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _oldValue_ be ? ToNumeric(? GetValue(_lhs_)).
+          1. Let _newValue_ be the result of subtracting Type(_oldValue_).one from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_lhs_, _newValue_).
           1. Return _oldValue_.
         </emu-alg>
@@ -12261,8 +12465,8 @@
         <emu-grammar>UpdateExpression : `++` UnaryExpression</emu-grammar>
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
-          1. Let _oldValue_ be ? ToNumber(? GetValue(_expr_)).
-          1. Let _newValue_ be the result of adding the value 1 to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
+          1. Let _newValue_ be the result of adding Type(_oldValue_).one to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_expr_, _newValue_).
           1. Return _newValue_.
         </emu-alg>
@@ -12279,8 +12483,8 @@
         <emu-grammar>UpdateExpression : `--` UnaryExpression</emu-grammar>
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
-          1. Let _oldValue_ be ? ToNumber(? GetValue(_expr_)).
-          1. Let _newValue_ be the result of subtracting the value 1 from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
+          1. Let _newValue_ be the result of subtracting Type(_oldValue_).one from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_expr_, _newValue_).
           1. Return _newValue_.
         </emu-alg>
@@ -12477,6 +12681,22 @@
             </tr>
             <tr>
               <td>
+                Int64
+              </td>
+              <td>
+                `"int64"`
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Uint64
+              </td>
+              <td>
+                `"uint64"`
+              </td>
+            </tr>
+            <tr>
+              <td>
                 String
               </td>
               <td>
@@ -12537,7 +12757,7 @@
     <emu-clause id="sec-unary-plus-operator">
       <h1>Unary `+` Operator</h1>
       <emu-note>
-        <p>The unary + operator converts its operand to Number type.</p>
+        <p>The unary + operator converts its operand to a numeric type.</p>
       </emu-note>
 
       <!-- es6num="12.5.9.1" -->
@@ -12546,7 +12766,7 @@
         <emu-grammar>UnaryExpression : `+` UnaryExpression</emu-grammar>
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
-          1. Return ? ToNumber(? GetValue(_expr_)).
+          1. Return ? ToNumeric(? GetValue(_expr_)).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -12555,7 +12775,7 @@
     <emu-clause id="sec-unary-minus-operator">
       <h1>Unary `-` Operator</h1>
       <emu-note>
-        <p>The unary `-` operator converts its operand to Number type and then negates it. Negating *+0* produces *-0*, and negating *-0* produces *+0*.</p>
+        <p>The unary `-` operator converts its operand to a numeric type and then negates it. For the Number type, negating *+0* produces *-0*, and negating *-0* produces *+0*.</p>
       </emu-note>
 
       <!-- es6num="12.5.10.1" -->
@@ -12564,7 +12784,9 @@
         <emu-grammar>UnaryExpression : `-` UnaryExpression</emu-grammar>
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
-          1. Let _oldValue_ be ? ToNumber(? GetValue(_expr_)).
+          1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
+          1. If Type(_oldValue_) is Int64 or Uint64, then
+            1. Return the result of subtracting _oldValue_ from Type(_oldValue_).zero, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. If _oldValue_ is *NaN*, return *NaN*.
           1. Return the result of negating _oldValue_; that is, compute a Number with the same magnitude but opposite sign.
         </emu-alg>
@@ -12698,8 +12920,8 @@
         1. Let _leftValue_ be ? GetValue(_left_).
         1. Let _right_ be the result of evaluating |ExponentiationExpression|.
         1. Let _rightValue_ be ? GetValue(_right_).
-        1. Let _lnum_ be ? ToNumber(_leftValue_).
-        1. Let _rnum_ be ? ToNumber(_rightValue_).
+        1. Let _lnum_ be ? ToNumeric(_leftValue_).
+        1. Let _rnum_ be ? ToNumeric(_rightValue_).
         1. Return the result of applying the |MultiplicativeOperator| (`*`, `/`, or `%`) to _lnum_ and _rnum_ as specified in <emu-xref href="#sec-applying-the-mul-operator"></emu-xref>, <emu-xref href="#sec-applying-the-div-operator"></emu-xref>, or <emu-xref href="#sec-applying-the-mod-operator"></emu-xref>.
       </emu-alg>
 
@@ -12893,8 +13115,8 @@
             1. Let _lstr_ be ? ToString(_lprim_).
             1. Let _rstr_ be ? ToString(_rprim_).
             1. Return the String that is the result of concatenating _lstr_ and _rstr_.
-          1. Let _lnum_ be ? ToNumber(_lprim_).
-          1. Let _rnum_ be ? ToNumber(_rprim_).
+          1. Let _lnum_ be ? ToNumeric(_lprim_).
+          1. Let _rnum_ be ? ToNumeric(_rprim_).
           1. Return the result of applying the addition operation to _lnum_ and _rnum_. See the Note below <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>.
         </emu-alg>
         <emu-note>
@@ -22494,7 +22716,7 @@
       <h1>isFinite ( _number_ )</h1>
       <p>The `isFinite` function is the <dfn>%isFinite%</dfn> intrinsic object. When the `isFinite` function is called with one argument _number_, the following steps are taken:</p>
       <emu-alg>
-        1. Let _num_ be ? ToNumber(_number_).
+        1. Let _num_ be ? ToNumeric(_number_).
         1. If _num_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
         1. Otherwise, return *true*.
       </emu-alg>
@@ -22505,7 +22727,7 @@
       <h1>isNaN ( _number_ )</h1>
       <p>The `isNaN` function is the <dfn>%isNaN%</dfn> intrinsic object. When the `isNaN` function is called with one argument _number_, the following steps are taken:</p>
       <emu-alg>
-        1. Let _num_ be ? ToNumber(_number_).
+        1. Let _num_ be ? ToNumeric(_number_).
         1. If _num_ is *NaN*, return *true*.
         1. Otherwise, return *false*.
       </emu-alg>
@@ -24474,368 +24696,607 @@
 <emu-clause id="sec-numbers-and-dates">
   <h1>Numbers and Dates</h1>
 
-  <!-- es6num="20.1" -->
-  <emu-clause id="sec-number-objects">
-    <h1>Number Objects</h1>
+  <emu-clause id="sec-numeric-objects">
+    <h1>Numeric Objects</h1>
+    <p>XXXbe</p>
 
-    <!-- es6num="20.1.1" -->
-    <emu-clause id="sec-number-constructor">
-      <h1>The Number Constructor</h1>
-      <p>The Number constructor is the <dfn>%Number%</dfn> intrinsic object and the initial value of the `Number` property of the global object. When called as a constructor, it creates and initializes a new Number object. When `Number` is called as a function rather than as a constructor, it performs a type conversion.</p>
-      <p>The `Number` constructor is designed to be subclassable. It may be used as the value of an `extends` clause of a class definition. Subclass constructors that intend to inherit the specified `Number` behaviour must include a `super` call to the `Number` constructor to create and initialize the subclass instance with a [[NumberData]] internal slot.</p>
+    <!-- es6num="20.1" -->
+    <emu-clause id="sec-number-objects">
+      <h1>Number Objects</h1>
 
-      <!-- es6num="20.1.1.1" -->
-      <emu-clause id="sec-number-constructor-number-value">
-        <h1>Number ( _value_ )</h1>
-        <p>When `Number` is called with argument _number_, the following steps are taken:</p>
-        <emu-alg>
-          1. If no arguments were passed to this function invocation, let _n_ be *+0*.
-          1. Else, let _n_ be ? ToNumber(_value_).
-          1. If NewTarget is *undefined*, return _n_.
-          1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, `"%NumberPrototype%"`, &laquo; [[NumberData]] &raquo;).
-          1. Set _O_.[[NumberData]] to _n_.
-          1. Return _O_.
-        </emu-alg>
-      </emu-clause>
-    </emu-clause>
+      <!-- es6num="20.1.1" -->
+      <emu-clause id="sec-number-constructor">
+        <h1>The Number Constructor</h1>
+        <p>The Number constructor is the <dfn>%Number%</dfn> intrinsic object and the initial value of the `Number` property of the global object. When called as a constructor, it creates and initializes a new Number object. When `Number` is called as a function rather than as a constructor, it performs a type conversion.</p>
+        <p>The `Number` constructor is designed to be subclassable. It may be used as the value of an `extends` clause of a class definition. Subclass constructors that intend to inherit the specified `Number` behaviour must include a `super` call to the `Number` constructor to create and initialize the subclass instance with a [[NumberData]] internal slot.</p>
 
-    <!-- es6num="20.1.2" -->
-    <emu-clause id="sec-properties-of-the-number-constructor">
-      <h1>Properties of the Number Constructor</h1>
-      <p>The value of the [[Prototype]] internal slot of the Number constructor is the intrinsic object %FunctionPrototype%.</p>
-      <p>The Number constructor has the following properties:</p>
-
-      <!-- es6num="20.1.2.1" -->
-      <emu-clause id="sec-number.epsilon">
-        <h1>Number.EPSILON</h1>
-        <p>The value of Number.EPSILON is the difference between 1 and the smallest value greater than 1 that is representable as a Number value, which is approximately 2.2204460492503130808472633361816 x 10<sup>-16</sup>.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.2" -->
-      <emu-clause id="sec-number.isfinite">
-        <h1>Number.isFinite ( _number_ )</h1>
-        <p>When the `Number.isFinite` is called with one argument _number_, the following steps are taken:</p>
-        <emu-alg>
-          1. If Type(_number_) is not Number, return *false*.
-          1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
-          1. Otherwise, return *true*.
-        </emu-alg>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.3" -->
-      <emu-clause id="sec-number.isinteger">
-        <h1>Number.isInteger ( _number_ )</h1>
-        <p>When the `Number.isInteger` is called with one argument _number_, the following steps are taken:</p>
-        <emu-alg>
-          1. If Type(_number_) is not Number, return *false*.
-          1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
-          1. Let _integer_ be ToInteger(_number_).
-          1. If _integer_ is not equal to _number_, return *false*.
-          1. Otherwise, return *true*.
-        </emu-alg>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.4" -->
-      <emu-clause id="sec-number.isnan">
-        <h1>Number.isNaN ( _number_ )</h1>
-        <p>When the `Number.isNaN` is called with one argument _number_, the following steps are taken:</p>
-        <emu-alg>
-          1. If Type(_number_) is not Number, return *false*.
-          1. If _number_ is *NaN*, return *true*.
-          1. Otherwise, return *false*.
-        </emu-alg>
-        <emu-note>
-          <p>This function differs from the global isNaN function (<emu-xref href="#sec-isnan-number"></emu-xref>) in that it does not convert its argument to a Number before determining whether it is *NaN*.</p>
-        </emu-note>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.5" -->
-      <emu-clause id="sec-number.issafeinteger">
-        <h1>Number.isSafeInteger ( _number_ )</h1>
-        <p>When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
-        <emu-alg>
-          1. If Type(_number_) is not Number, return *false*.
-          1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
-          1. Let _integer_ be ToInteger(_number_).
-          1. If _integer_ is not equal to _number_, return *false*.
-          1. If abs(_integer_) &le; 2<sup>53</sup>-1, return *true*.
-          1. Otherwise, return *false*.
-        </emu-alg>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.6" -->
-      <emu-clause id="sec-number.max_safe_integer">
-        <h1>Number.MAX_SAFE_INTEGER</h1>
-        <emu-note>
-          <p>The value of `Number.MAX_SAFE_INTEGER` is the largest integer n such that n and n + 1 are both exactly representable as a Number value.</p>
-        </emu-note>
-        <p>The value of Number.MAX_SAFE_INTEGER is 9007199254740991 (2<sup>53</sup>-1).</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.7" -->
-      <emu-clause id="sec-number.max_value">
-        <h1>Number.MAX_VALUE</h1>
-        <p>The value of `Number.MAX_VALUE` is the largest positive finite value of the Number type, which is approximately <emu-eqn>1.7976931348623157 &times; 10<sup>308</sup></emu-eqn>.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.8" -->
-      <emu-clause id="sec-number.min_safe_integer">
-        <h1>Number.MIN_SAFE_INTEGER</h1>
-        <emu-note>
-          <p>The value of `Number.MIN_SAFE_INTEGER` is the smallest integer n such that n and n - 1 are both exactly representable as a Number value.</p>
-        </emu-note>
-        <p>The value of Number.MIN_SAFE_INTEGER is -9007199254740991 (-(2<sup>53</sup>-1)).</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.9" -->
-      <emu-clause id="sec-number.min_value">
-        <h1>Number.MIN_VALUE</h1>
-        <p>The value of `Number.MIN_VALUE` is the smallest positive value of the Number type, which is approximately <emu-eqn>5 &times; 10<sup>-324</sup></emu-eqn>.</p>
-        <p>In the IEEE 754-2008 double precision binary representation, the smallest possible value is a denormalized number. If an implementation does not support denormalized values, the value of `Number.MIN_VALUE` must be the smallest non-zero positive value that can actually be represented by the implementation.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.10" -->
-      <emu-clause id="sec-number.nan">
-        <h1>Number.NaN</h1>
-        <p>The value of `Number.NaN` is *NaN*.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.11" -->
-      <emu-clause id="sec-number.negative_infinity">
-        <h1>Number.NEGATIVE_INFINITY</h1>
-        <p>The value of Number.NEGATIVE_INFINITY is *-&infin;*.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.12" -->
-      <emu-clause id="sec-number.parsefloat">
-        <h1>Number.parseFloat ( _string_ )</h1>
-        <p>The value of the `Number.parseFloat` data property is the same built-in function object that is the value of the `parseFloat` property of the global object defined in <emu-xref href="#sec-parsefloat-string"></emu-xref>.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.13" -->
-      <emu-clause id="sec-number.parseint">
-        <h1>Number.parseInt ( _string_, _radix_ )</h1>
-        <p>The value of the `Number.parseInt` data property is the same built-in function object that is the value of the `parseInt` property of the global object defined in <emu-xref href="#sec-parseint-string-radix"></emu-xref>.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.14" -->
-      <emu-clause id="sec-number.positive_infinity">
-        <h1>Number.POSITIVE_INFINITY</h1>
-        <p>The value of Number.POSITIVE_INFINITY is *+&infin;*.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.2.15" -->
-      <emu-clause id="sec-number.prototype">
-        <h1>Number.prototype</h1>
-        <p>The initial value of `Number.prototype` is the intrinsic object %NumberPrototype%.</p>
-        <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
-      </emu-clause>
-    </emu-clause>
-
-    <!-- es6num="20.1.3" -->
-    <emu-clause id="sec-properties-of-the-number-prototype-object">
-      <h1>Properties of the Number Prototype Object</h1>
-      <p>The Number prototype object is the intrinsic object <dfn>%NumberPrototype%</dfn>. The Number prototype object is an ordinary object. The Number prototype is itself a Number object; it has a [[NumberData]] internal slot with the value *+0*.</p>
-      <p>The value of the [[Prototype]] internal slot of the Number prototype object is the intrinsic object %ObjectPrototype%.</p>
-      <p>Unless explicitly stated otherwise, the methods of the Number prototype object defined below are not generic and the *this* value passed to them must be either a Number value or an object that has a [[NumberData]] internal slot that has been initialized to a Number value.</p>
-      <p>The abstract operation thisNumberValue(_value_) performs the following steps:</p>
-      <emu-alg>
-        1. If Type(_value_) is Number, return _value_.
-        1. If Type(_value_) is Object and _value_ has a [[NumberData]] internal slot, then
-          1. Assert: _value_.[[NumberData]] is a Number value.
-          1. Return _value_.[[NumberData]].
-        1. Throw a *TypeError* exception.
-      </emu-alg>
-      <p>The phrase &ldquo;this Number value&rdquo; within the specification of a method refers to the result returned by calling the abstract operation thisNumberValue with the *this* value of the method invocation passed as the argument.</p>
-
-      <!-- es6num="20.1.3.1" -->
-      <emu-clause id="sec-number.prototype.constructor">
-        <h1>Number.prototype.constructor</h1>
-        <p>The initial value of `Number.prototype.constructor` is the intrinsic object %Number%.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.3.2" -->
-      <emu-clause id="sec-number.prototype.toexponential">
-        <h1>Number.prototype.toExponential ( _fractionDigits_ )</h1>
-        <p>Return a String containing this Number value represented in decimal exponential notation with one digit before the significand's decimal point and _fractionDigits_ digits after the significand's decimal point. If _fractionDigits_ is *undefined*, include as many significand digits as necessary to uniquely specify the Number (just like in ToString except that in this case the Number is always output in exponential notation). Specifically, perform the following steps:</p>
-        <emu-alg>
-          1. Let _x_ be ? thisNumberValue(*this* value).
-          1. Let _f_ be ? ToInteger(_fractionDigits_).
-          1. Assert: _f_ is 0, when _fractionDigits_ is *undefined*.
-          1. If _x_ is *NaN*, return the String `"NaN"`.
-          1. Let _s_ be the empty String.
-          1. If _x_ &lt; 0, then
-            1. Let _s_ be `"-"`.
-            1. Let _x_ be -_x_.
-          1. If _x_ = *+&infin;*, then
-            1. Return the concatenation of the Strings _s_ and `"Infinity"`.
-          1. If _f_ &lt; 0 or _f_ &gt; 20, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toExponential` for values of _f_ less than 0 or greater than 20. In this case `toExponential` would not necessarily throw *RangeError* for such values.
-          1. If _x_ = 0, then
-            1. Let _m_ be the String consisting of _f_+1 occurrences of the code unit 0x0030 (DIGIT ZERO).
-            1. Let _e_ be 0.
-          1. Else _x_ &ne; 0,
-            1. If _fractionDigits_ is not *undefined*, then
-              1. Let _e_ and _n_ be integers such that 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup> and for which the exact mathematical value of _n_ &times; 10<sup>_e_-_f_</sup> - _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ &times; 10<sup>_e_-_f_</sup> is larger.
-            1. Else _fractionDigits_ is *undefined*,
-              1. Let _e_, _n_, and _f_ be integers such that _f_ &ge; 0, 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup>, the Number value for _n_ &times; 10<sup>_e_-_f_</sup> is _x_, and _f_ is as small as possible. Note that the decimal representation of _n_ has _f_+1 digits, _n_ is not divisible by 10, and the least significant digit of _n_ is not necessarily uniquely determined by these criteria.
-            1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
-          1. If _f_ &ne; 0, then
-            1. Let _a_ be the first element of _m_, and let _b_ be the remaining _f_ elements of _m_.
-            1. Let _m_ be the concatenation of the three Strings _a_, `"."`, and _b_.
-          1. If _e_ = 0, then
-            1. Let _c_ be `"+"`.
-            1. Let _d_ be `"0"`.
-          1. Else,
-            1. If _e_ &gt; 0, let _c_ be `"+"`.
-            1. Else _e_ &le; 0,
-              1. Let _c_ be `"-"`.
-              1. Let _e_ be -_e_.
-            1. Let _d_ be the String consisting of the digits of the decimal representation of _e_ (in order, with no leading zeroes).
-          1. Let _m_ be the concatenation of the four Strings _m_, `"e"`, _c_, and _d_.
-          1. Return the concatenation of the Strings _s_ and _m_.
-        </emu-alg>
-        <p>If the `toExponential` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
-        <emu-note>
-          <p>For implementations that provide more accurate conversions than required by the rules above, it is recommended that the following alternative version of step 10.b.i be used as a guideline:</p>
-          <emu-alg type="i">
-            1. Let _e_, _n_, and _f_ be integers such that _f_ &ge; 0, 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup>, the Number value for _n_ &times; 10<sup>_e_-_f_</sup> is _x_, and _f_ is as small as possible. If there are multiple possibilities for _n_, choose the value of _n_ for which _n_ &times; 10<sup>_e_-_f_</sup> is closest in value to _x_. If there are two such possible values of _n_, choose the one that is even.
+        <!-- es6num="20.1.1.1" -->
+        <emu-clause id="sec-number-constructor-number-value">
+          <h1>Number ( _value_ )</h1>
+          <p>When `Number` is called with argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If no arguments were passed to this function invocation, let _n_ be *+0*.
+            1. Else, let _n_ be ? ToNumber(_value_).
+            1. If NewTarget is *undefined*, return _n_.
+            1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, `"%NumberPrototype%"`, &laquo; [[NumberData]] &raquo;).
+            1. Set _O_.[[NumberData]] to _n_.
+            1. Return _O_.
           </emu-alg>
-        </emu-note>
+        </emu-clause>
       </emu-clause>
 
-      <!-- es6num="20.1.3.3" -->
-      <emu-clause id="sec-number.prototype.tofixed">
-        <h1>Number.prototype.toFixed ( _fractionDigits_ )</h1>
-        <emu-note>
-          <p>`toFixed` returns a String containing this Number value represented in decimal fixed-point notation with _fractionDigits_ digits after the decimal point. If _fractionDigits_ is *undefined*, 0 is assumed.</p>
-        </emu-note>
-        <p>The following steps are performed:</p>
+      <!-- es6num="20.1.2" -->
+      <emu-clause id="sec-properties-of-the-number-constructor">
+        <h1>Properties of the Number Constructor</h1>
+        <p>The value of the [[Prototype]] internal slot of the Number constructor is the intrinsic object %FunctionPrototype%.</p>
+        <p>The Number constructor has the following properties:</p>
+
+        <!-- es6num="20.1.2.1" -->
+        <emu-clause id="sec-number.epsilon">
+          <h1>Number.EPSILON</h1>
+          <p>The value of Number.EPSILON is the difference between 1 and the smallest value greater than 1 that is representable as a Number value, which is approximately 2.2204460492503130808472633361816 x 10<sup>-16</sup>.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.2" -->
+        <emu-clause id="sec-number.isfinite">
+          <h1>Number.isFinite ( _number_ )</h1>
+          <p>When the `Number.isFinite` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
+            1. Otherwise, return *true*.
+          </emu-alg>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.3" -->
+        <emu-clause id="sec-number.isinteger">
+          <h1>Number.isInteger ( _number_ )</h1>
+          <p>When the `Number.isInteger` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
+            1. Let _integer_ be ToInteger(_number_).
+            1. If _integer_ is not equal to _number_, return *false*.
+            1. Otherwise, return *true*.
+          </emu-alg>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.4" -->
+        <emu-clause id="sec-number.isnan">
+          <h1>Number.isNaN ( _number_ )</h1>
+          <p>When the `Number.isNaN` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, return *true*.
+            1. Otherwise, return *false*.
+          </emu-alg>
+          <emu-note>
+            <p>This function differs from the global isNaN function (<emu-xref href="#sec-isnan-number"></emu-xref>) in that it does not convert its argument to a Number before determining whether it is *NaN*.</p>
+          </emu-note>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.5" -->
+        <emu-clause id="sec-number.issafeinteger">
+          <h1>Number.isSafeInteger ( _number_ )</h1>
+          <p>When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
+            1. Let _integer_ be ToInteger(_number_).
+            1. If _integer_ is not equal to _number_, return *false*.
+            1. If abs(_integer_) &le; 2<sup>53</sup>-1, return *true*.
+            1. Otherwise, return *false*.
+          </emu-alg>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.6" -->
+        <emu-clause id="sec-number.max_safe_integer">
+          <h1>Number.MAX_SAFE_INTEGER</h1>
+          <emu-note>
+            <p>The value of `Number.MAX_SAFE_INTEGER` is the largest integer n such that n and n + 1 are both exactly representable as a Number value.</p>
+          </emu-note>
+          <p>The value of Number.MAX_SAFE_INTEGER is 9007199254740991 (2<sup>53</sup>-1).</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.7" -->
+        <emu-clause id="sec-number.max_value">
+          <h1>Number.MAX_VALUE</h1>
+          <p>The value of `Number.MAX_VALUE` is the largest positive finite value of the Number type, which is approximately <emu-eqn>1.7976931348623157 &times; 10<sup>308</sup></emu-eqn>.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.8" -->
+        <emu-clause id="sec-number.min_safe_integer">
+          <h1>Number.MIN_SAFE_INTEGER</h1>
+          <emu-note>
+            <p>The value of `Number.MIN_SAFE_INTEGER` is the smallest integer n such that n and n - 1 are both exactly representable as a Number value.</p>
+          </emu-note>
+          <p>The value of Number.MIN_SAFE_INTEGER is -9007199254740991 (-(2<sup>53</sup>-1)).</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.9" -->
+        <emu-clause id="sec-number.min_value">
+          <h1>Number.MIN_VALUE</h1>
+          <p>The value of `Number.MIN_VALUE` is the smallest positive value of the Number type, which is approximately <emu-eqn>5 &times; 10<sup>-324</sup></emu-eqn>.</p>
+          <p>In the IEEE 754-2008 double precision binary representation, the smallest possible value is a denormalized number. If an implementation does not support denormalized values, the value of `Number.MIN_VALUE` must be the smallest non-zero positive value that can actually be represented by the implementation.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.10" -->
+        <emu-clause id="sec-number.nan">
+          <h1>Number.NaN</h1>
+          <p>The value of `Number.NaN` is *NaN*.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.11" -->
+        <emu-clause id="sec-number.negative_infinity">
+          <h1>Number.NEGATIVE_INFINITY</h1>
+          <p>The value of Number.NEGATIVE_INFINITY is *-&infin;*.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.12" -->
+        <emu-clause id="sec-number.parsefloat">
+          <h1>Number.parseFloat ( _string_ )</h1>
+          <p>The value of the `Number.parseFloat` data property is the same built-in function object that is the value of the `parseFloat` property of the global object defined in <emu-xref href="#sec-parsefloat-string"></emu-xref>.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.13" -->
+        <emu-clause id="sec-number.parseint">
+          <h1>Number.parseInt ( _string_, _radix_ )</h1>
+          <p>The value of the `Number.parseInt` data property is the same built-in function object that is the value of the `parseInt` property of the global object defined in <emu-xref href="#sec-parseint-string-radix"></emu-xref>.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.14" -->
+        <emu-clause id="sec-number.positive_infinity">
+          <h1>Number.POSITIVE_INFINITY</h1>
+          <p>The value of Number.POSITIVE_INFINITY is *+&infin;*.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.2.15" -->
+        <emu-clause id="sec-number.prototype">
+          <h1>Number.prototype</h1>
+          <p>The initial value of `Number.prototype` is the intrinsic object %NumberPrototype%.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+      </emu-clause>
+
+      <!-- es6num="20.1.3" -->
+      <emu-clause id="sec-properties-of-the-number-prototype-object">
+        <h1>Properties of the Number Prototype Object</h1>
+        <p>The Number prototype object is the intrinsic object <dfn>%NumberPrototype%</dfn>. The Number prototype object is an ordinary object. The Number prototype is itself a Number object; it has a [[NumberData]] internal slot with the value *+0*.</p>
+        <p>The value of the [[Prototype]] internal slot of the Number prototype object is the intrinsic object %ObjectPrototype%.</p>
+        <p>Unless explicitly stated otherwise, the methods of the Number prototype object defined below are not generic and the *this* value passed to them must be either a Number value or an object that has a [[NumberData]] internal slot that has been initialized to a Number value.</p>
+        <p>The abstract operation thisNumberValue(_value_) performs the following steps:</p>
         <emu-alg>
-          1. Let _x_ be ? thisNumberValue(*this* value).
-          1. Let _f_ be ? ToInteger(_fractionDigits_). (If _fractionDigits_ is *undefined*, this step produces the value 0.)
-          1. If _f_ &lt; 0 or _f_ &gt; 20, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toFixed` for values of _f_ less than 0 or greater than 20. In this case `toFixed` would not necessarily throw *RangeError* for such values.
-          1. If _x_ is *NaN*, return the String `"NaN"`.
-          1. Let _s_ be the empty String.
-          1. If _x_ &lt; 0, then
-            1. Let _s_ be `"-"`.
-            1. Let _x_ be -_x_.
-          1. If _x_ &ge; 10<sup>21</sup>, then
-            1. Let _m_ be ! ToString(_x_).
-          1. Else _x_ &lt; 10<sup>21</sup>,
-            1. Let _n_ be an integer for which the exact mathematical value of _n_ &divide; 10<sup>_f_</sup> - _x_ is as close to zero as possible. If there are two such _n_, pick the larger _n_.
-            1. If _n_ = 0, let _m_ be the String `"0"`. Otherwise, let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
-            1. If _f_ &ne; 0, then
-              1. Let _k_ be the number of elements in _m_.
-              1. If _k_ &le; _f_, then
-                1. Let _z_ be the String consisting of _f_+1-_k_ occurrences of the code unit 0x0030 (DIGIT ZERO).
-                1. Let _m_ be the concatenation of Strings _z_ and _m_.
-                1. Let _k_ be _f_ + 1.
-              1. Let _a_ be the first _k_-_f_ elements of _m_, and let _b_ be the remaining _f_ elements of _m_.
-              1. Let _m_ be the concatenation of the three Strings _a_, `"."`, and _b_.
-          1. Return the concatenation of the Strings _s_ and _m_.
+          1. If Type(_value_) is Number, return _value_.
+          1. If Type(_value_) is Object and _value_ has a [[NumberData]] internal slot, then
+            1. Assert: _value_.[[NumberData]] is a Number value.
+            1. Return _value_.[[NumberData]].
+          1. Throw a *TypeError* exception.
         </emu-alg>
-        <p>If the `toFixed` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
-        <emu-note>
-          <p>The output of `toFixed` may be more precise than `toString` for some values because toString only prints enough significant digits to distinguish the number from adjacent number values. For example,</p>
-          <p>`(1000000000000000128).toString()` returns `"1000000000000000100"`, while
-            <br>
-            `(1000000000000000128).toFixed(0)` returns `"1000000000000000128"`.</p>
-        </emu-note>
-      </emu-clause>
+        <p>The phrase &ldquo;this Number value&rdquo; within the specification of a method refers to the result returned by calling the abstract operation thisNumberValue with the *this* value of the method invocation passed as the argument.</p>
 
-      <!-- es6num="20.1.3.4" -->
-      <emu-clause id="sec-number.prototype.tolocalestring">
-        <h1>Number.prototype.toLocaleString ( [ _reserved1_ [ , _reserved2_ ] ] )</h1>
-        <p>An ECMAScript implementation that includes the ECMA-402 Internationalization API must implement the `Number.prototype.toLocaleString` method as specified in the ECMA-402 specification. If an ECMAScript implementation does not include the ECMA-402 API the following specification of the `toLocaleString` method is used.</p>
-        <p>Produces a String value that represents this Number value formatted according to the conventions of the host environment's current locale. This function is implementation-dependent, and it is permissible, but not encouraged, for it to return the same thing as `toString`.</p>
-        <p>The meanings of the optional parameters to this method are defined in the ECMA-402 specification; implementations that do not include ECMA-402 support must not use those parameter positions for anything else.</p>
-      </emu-clause>
+        <!-- es6num="20.1.3.1" -->
+        <emu-clause id="sec-number.prototype.constructor">
+          <h1>Number.prototype.constructor</h1>
+          <p>The initial value of `Number.prototype.constructor` is the intrinsic object %Number%.</p>
+        </emu-clause>
 
-      <!-- es6num="20.1.3.5" -->
-      <emu-clause id="sec-number.prototype.toprecision">
-        <h1>Number.prototype.toPrecision ( _precision_ )</h1>
-        <p>Return a String containing this Number value represented either in decimal exponential notation with one digit before the significand's decimal point and <emu-eqn>_precision_-1</emu-eqn> digits after the significand's decimal point or in decimal fixed notation with _precision_ significant digits. If _precision_ is *undefined*, call ToString instead. Specifically, perform the following steps:</p>
-        <emu-alg>
-          1. Let _x_ be ? thisNumberValue(*this* value).
-          1. If _precision_ is *undefined*, return ! ToString(_x_).
-          1. Let _p_ be ? ToInteger(_precision_).
-          1. If _x_ is *NaN*, return the String `"NaN"`.
-          1. Let _s_ be the empty String.
-          1. If _x_ &lt; 0, then
-            1. Let _s_ be code unit 0x002D (HYPHEN-MINUS).
-            1. Let _x_ be -_x_.
-          1. If _x_ = *+&infin;*, then
-            1. Return the String that is the concatenation of _s_ and `"Infinity"`.
-          1. If _p_ &lt; 1 or _p_ &gt; 21, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toPrecision` for values of _p_ less than 1 or greater than 21. In this case `toPrecision` would not necessarily throw *RangeError* for such values.
-          1. If _x_ = 0, then
-            1. Let _m_ be the String consisting of _p_ occurrences of the code unit 0x0030 (DIGIT ZERO).
-            1. Let _e_ be 0.
-          1. Else _x_ &ne; 0,
-            1. Let _e_ and _n_ be integers such that 10<sup>_p_-1</sup> &le; _n_ &lt; 10<sup>_p_</sup> and for which the exact mathematical value of _n_ &times; 10<sup>_e_-_p_+1</sup> - _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ &times; 10<sup>_e_-_p_+1</sup> is larger.
-            1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
-            1. If _e_ &lt; -6 or _e_ &ge; _p_, then
-              1. Assert: _e_ &ne; 0.
-              1. If _p_ &ne; 1, then
-                1. Let _a_ be the first element of _m_, and let _b_ be the remaining _p_-1 elements of _m_.
-                1. Let _m_ be the concatenation of _a_, `"."`, and _b_.
-              1. If _e_ &gt; 0, then
-                1. Let _c_ be code unit 0x002B (PLUS SIGN).
-              1. Else _e_ &lt; 0,
-                1. Let _c_ be code unit 0x002D (HYPHEN-MINUS).
+        <!-- es6num="20.1.3.2" -->
+        <emu-clause id="sec-number.prototype.toexponential">
+          <h1>Number.prototype.toExponential ( _fractionDigits_ )</h1>
+          <p>Return a String containing this Number value represented in decimal exponential notation with one digit before the significand's decimal point and _fractionDigits_ digits after the significand's decimal point. If _fractionDigits_ is *undefined*, include as many significand digits as necessary to uniquely specify the Number (just like in ToString except that in this case the Number is always output in exponential notation). Specifically, perform the following steps:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. Let _f_ be ? ToInteger(_fractionDigits_).
+            1. Assert: _f_ is 0, when _fractionDigits_ is *undefined*.
+            1. If _x_ is *NaN*, return the String `"NaN"`.
+            1. Let _s_ be the empty String.
+            1. If _x_ &lt; 0, then
+              1. Let _s_ be `"-"`.
+              1. Let _x_ be -_x_.
+            1. If _x_ = *+&infin;*, then
+              1. Return the concatenation of the Strings _s_ and `"Infinity"`.
+            1. If _f_ &lt; 0 or _f_ &gt; 20, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toExponential` for values of _f_ less than 0 or greater than 20. In this case `toExponential` would not necessarily throw *RangeError* for such values.
+            1. If _x_ = 0, then
+              1. Let _m_ be the String consisting of _f_+1 occurrences of the code unit 0x0030 (DIGIT ZERO).
+              1. Let _e_ be 0.
+            1. Else _x_ &ne; 0,
+              1. If _fractionDigits_ is not *undefined*, then
+                1. Let _e_ and _n_ be integers such that 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup> and for which the exact mathematical value of _n_ &times; 10<sup>_e_-_f_</sup> - _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ &times; 10<sup>_e_-_f_</sup> is larger.
+              1. Else _fractionDigits_ is *undefined*,
+                1. Let _e_, _n_, and _f_ be integers such that _f_ &ge; 0, 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup>, the Number value for _n_ &times; 10<sup>_e_-_f_</sup> is _x_, and _f_ is as small as possible. Note that the decimal representation of _n_ has _f_+1 digits, _n_ is not divisible by 10, and the least significant digit of _n_ is not necessarily uniquely determined by these criteria.
+              1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
+            1. If _f_ &ne; 0, then
+              1. Let _a_ be the first element of _m_, and let _b_ be the remaining _f_ elements of _m_.
+              1. Let _m_ be the concatenation of the three Strings _a_, `"."`, and _b_.
+            1. If _e_ = 0, then
+              1. Let _c_ be `"+"`.
+              1. Let _d_ be `"0"`.
+            1. Else,
+              1. If _e_ &gt; 0, let _c_ be `"+"`.
+              1. Else _e_ &le; 0,
+                1. Let _c_ be `"-"`.
                 1. Let _e_ be -_e_.
               1. Let _d_ be the String consisting of the digits of the decimal representation of _e_ (in order, with no leading zeroes).
-              1. Return the concatenation of _s_, _m_, code unit 0x0065 (LATIN SMALL LETTER E), _c_, and _d_.
-          1. If _e_ = _p_-1, return the concatenation of the Strings _s_ and _m_.
-          1. If _e_ &ge; 0, then
-            1. Let _m_ be the concatenation of the first _e_+1 elements of _m_, the code unit 0x002E (FULL STOP), and the remaining _p_- (_e_+1) elements of _m_.
-          1. Else _e_ &lt; 0,
-            1. Let _m_ be the String formed by the concatenation of code unit 0x0030 (DIGIT ZERO), code unit 0x002E (FULL STOP), -(_e_+1) occurrences of code unit 0x0030 (DIGIT ZERO), and the String _m_.
-          1. Return the String that is the concatenation of _s_ and _m_.
-        </emu-alg>
-        <p>If the `toPrecision` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
+            1. Let _m_ be the concatenation of the four Strings _m_, `"e"`, _c_, and _d_.
+            1. Return the concatenation of the Strings _s_ and _m_.
+          </emu-alg>
+          <p>If the `toExponential` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
+          <emu-note>
+            <p>For implementations that provide more accurate conversions than required by the rules above, it is recommended that the following alternative version of step 10.b.i be used as a guideline:</p>
+            <emu-alg type="i">
+              1. Let _e_, _n_, and _f_ be integers such that _f_ &ge; 0, 10<sup>_f_</sup> &le; _n_ &lt; 10<sup>_f_+1</sup>, the Number value for _n_ &times; 10<sup>_e_-_f_</sup> is _x_, and _f_ is as small as possible. If there are multiple possibilities for _n_, choose the value of _n_ for which _n_ &times; 10<sup>_e_-_f_</sup> is closest in value to _x_. If there are two such possible values of _n_, choose the one that is even.
+            </emu-alg>
+          </emu-note>
+        </emu-clause>
+
+        <!-- es6num="20.1.3.3" -->
+        <emu-clause id="sec-number.prototype.tofixed">
+          <h1>Number.prototype.toFixed ( _fractionDigits_ )</h1>
+          <emu-note>
+            <p>`toFixed` returns a String containing this Number value represented in decimal fixed-point notation with _fractionDigits_ digits after the decimal point. If _fractionDigits_ is *undefined*, 0 is assumed.</p>
+          </emu-note>
+          <p>The following steps are performed:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. Let _f_ be ? ToInteger(_fractionDigits_). (If _fractionDigits_ is *undefined*, this step produces the value 0.)
+            1. If _f_ &lt; 0 or _f_ &gt; 20, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toFixed` for values of _f_ less than 0 or greater than 20. In this case `toFixed` would not necessarily throw *RangeError* for such values.
+            1. If _x_ is *NaN*, return the String `"NaN"`.
+            1. Let _s_ be the empty String.
+            1. If _x_ &lt; 0, then
+              1. Let _s_ be `"-"`.
+              1. Let _x_ be -_x_.
+            1. If _x_ &ge; 10<sup>21</sup>, then
+              1. Let _m_ be ! ToString(_x_).
+            1. Else _x_ &lt; 10<sup>21</sup>,
+              1. Let _n_ be an integer for which the exact mathematical value of _n_ &divide; 10<sup>_f_</sup> - _x_ is as close to zero as possible. If there are two such _n_, pick the larger _n_.
+              1. If _n_ = 0, let _m_ be the String `"0"`. Otherwise, let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
+              1. If _f_ &ne; 0, then
+                1. Let _k_ be the number of elements in _m_.
+                1. If _k_ &le; _f_, then
+                  1. Let _z_ be the String consisting of _f_+1-_k_ occurrences of the code unit 0x0030 (DIGIT ZERO).
+                  1. Let _m_ be the concatenation of Strings _z_ and _m_.
+                  1. Let _k_ be _f_ + 1.
+                1. Let _a_ be the first _k_-_f_ elements of _m_, and let _b_ be the remaining _f_ elements of _m_.
+                1. Let _m_ be the concatenation of the three Strings _a_, `"."`, and _b_.
+            1. Return the concatenation of the Strings _s_ and _m_.
+          </emu-alg>
+          <p>If the `toFixed` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
+          <emu-note>
+            <p>The output of `toFixed` may be more precise than `toString` for some values because toString only prints enough significant digits to distinguish the number from adjacent number values. For example,</p>
+            <p>`(1000000000000000128).toString()` returns `"1000000000000000100"`, while
+              <br>
+              `(1000000000000000128).toFixed(0)` returns `"1000000000000000128"`.</p>
+          </emu-note>
+        </emu-clause>
+
+        <!-- es6num="20.1.3.4" -->
+        <emu-clause id="sec-number.prototype.tolocalestring">
+          <h1>Number.prototype.toLocaleString ( [ _reserved1_ [ , _reserved2_ ] ] )</h1>
+          <p>An ECMAScript implementation that includes the ECMA-402 Internationalization API must implement the `Number.prototype.toLocaleString` method as specified in the ECMA-402 specification. If an ECMAScript implementation does not include the ECMA-402 API the following specification of the `toLocaleString` method is used.</p>
+          <p>Produces a String value that represents this Number value formatted according to the conventions of the host environment's current locale. This function is implementation-dependent, and it is permissible, but not encouraged, for it to return the same thing as `toString`.</p>
+          <p>The meanings of the optional parameters to this method are defined in the ECMA-402 specification; implementations that do not include ECMA-402 support must not use those parameter positions for anything else.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.3.5" -->
+        <emu-clause id="sec-number.prototype.toprecision">
+          <h1>Number.prototype.toPrecision ( _precision_ )</h1>
+          <p>Return a String containing this Number value represented either in decimal exponential notation with one digit before the significand's decimal point and <emu-eqn>_precision_-1</emu-eqn> digits after the significand's decimal point or in decimal fixed notation with _precision_ significant digits. If _precision_ is *undefined*, call ToString instead. Specifically, perform the following steps:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. If _precision_ is *undefined*, return ! ToString(_x_).
+            1. Let _p_ be ? ToInteger(_precision_).
+            1. If _x_ is *NaN*, return the String `"NaN"`.
+            1. Let _s_ be the empty String.
+            1. If _x_ &lt; 0, then
+              1. Let _s_ be code unit 0x002D (HYPHEN-MINUS).
+              1. Let _x_ be -_x_.
+            1. If _x_ = *+&infin;*, then
+              1. Return the String that is the concatenation of _s_ and `"Infinity"`.
+            1. If _p_ &lt; 1 or _p_ &gt; 21, throw a *RangeError* exception. However, an implementation is permitted to extend the behaviour of `toPrecision` for values of _p_ less than 1 or greater than 21. In this case `toPrecision` would not necessarily throw *RangeError* for such values.
+            1. If _x_ = 0, then
+              1. Let _m_ be the String consisting of _p_ occurrences of the code unit 0x0030 (DIGIT ZERO).
+              1. Let _e_ be 0.
+            1. Else _x_ &ne; 0,
+              1. Let _e_ and _n_ be integers such that 10<sup>_p_-1</sup> &le; _n_ &lt; 10<sup>_p_</sup> and for which the exact mathematical value of _n_ &times; 10<sup>_e_-_p_+1</sup> - _x_ is as close to zero as possible. If there are two such sets of _e_ and _n_, pick the _e_ and _n_ for which _n_ &times; 10<sup>_e_-_p_+1</sup> is larger.
+              1. Let _m_ be the String consisting of the digits of the decimal representation of _n_ (in order, with no leading zeroes).
+              1. If _e_ &lt; -6 or _e_ &ge; _p_, then
+                1. Assert: _e_ &ne; 0.
+                1. If _p_ &ne; 1, then
+                  1. Let _a_ be the first element of _m_, and let _b_ be the remaining _p_-1 elements of _m_.
+                  1. Let _m_ be the concatenation of _a_, `"."`, and _b_.
+                1. If _e_ &gt; 0, then
+                  1. Let _c_ be code unit 0x002B (PLUS SIGN).
+                1. Else _e_ &lt; 0,
+                  1. Let _c_ be code unit 0x002D (HYPHEN-MINUS).
+                  1. Let _e_ be -_e_.
+                1. Let _d_ be the String consisting of the digits of the decimal representation of _e_ (in order, with no leading zeroes).
+                1. Return the concatenation of _s_, _m_, code unit 0x0065 (LATIN SMALL LETTER E), _c_, and _d_.
+            1. If _e_ = _p_-1, return the concatenation of the Strings _s_ and _m_.
+            1. If _e_ &ge; 0, then
+              1. Let _m_ be the concatenation of the first _e_+1 elements of _m_, the code unit 0x002E (FULL STOP), and the remaining _p_- (_e_+1) elements of _m_.
+            1. Else _e_ &lt; 0,
+              1. Let _m_ be the String formed by the concatenation of code unit 0x0030 (DIGIT ZERO), code unit 0x002E (FULL STOP), -(_e_+1) occurrences of code unit 0x0030 (DIGIT ZERO), and the String _m_.
+            1. Return the String that is the concatenation of _s_ and _m_.
+          </emu-alg>
+          <p>If the `toPrecision` method is called with more than one argument, then the behaviour is undefined (see clause <emu-xref href="#sec-ecmascript-standard-built-in-objects"></emu-xref>).</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.3.6" -->
+        <emu-clause id="sec-number.prototype.tostring">
+          <h1>Number.prototype.toString ( [ _radix_ ] )</h1>
+          <emu-note>
+            <p>The optional _radix_ should be an integer value in the inclusive range 2 to 36. If _radix_ not present or is *undefined* the Number 10 is used as the value of _radix_.</p>
+          </emu-note>
+          <p>The following steps are performed:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. If _radix_ is not present, let _radixNumber_ be 10.
+            1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
+            1. Else, let _radixNumber_ be ? ToInteger(_radix_).
+            1. If _radixNumber_ &lt; 2 or _radixNumber_ &gt; 36, throw a *RangeError* exception.
+            1. If _radixNumber_ = 10, return ! ToString(_x_).
+            1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
+          </emu-alg>
+          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
+          <p>The `length` property of the `toString` method is 1.</p>
+        </emu-clause>
+
+        <!-- es6num="20.1.3.7" -->
+        <emu-clause id="sec-number.prototype.valueof">
+          <h1>Number.prototype.valueOf ( )</h1>
+          <emu-alg>
+            1. Return ? thisNumberValue(*this* value).
+          </emu-alg>
+        </emu-clause>
       </emu-clause>
 
-      <!-- es6num="20.1.3.6" -->
-      <emu-clause id="sec-number.prototype.tostring">
-        <h1>Number.prototype.toString ( [ _radix_ ] )</h1>
-        <emu-note>
-          <p>The optional _radix_ should be an integer value in the inclusive range 2 to 36. If _radix_ not present or is *undefined* the Number 10 is used as the value of _radix_.</p>
-        </emu-note>
-        <p>The following steps are performed:</p>
-        <emu-alg>
-          1. Let _x_ be ? thisNumberValue(*this* value).
-          1. If _radix_ is not present, let _radixNumber_ be 10.
-          1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
-          1. Else, let _radixNumber_ be ? ToInteger(_radix_).
-          1. If _radixNumber_ &lt; 2 or _radixNumber_ &gt; 36, throw a *RangeError* exception.
-          1. If _radixNumber_ = 10, return ! ToString(_x_).
-          1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
-        </emu-alg>
-        <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
-        <p>The `length` property of the `toString` method is 1.</p>
-      </emu-clause>
-
-      <!-- es6num="20.1.3.7" -->
-      <emu-clause id="sec-number.prototype.valueof">
-        <h1>Number.prototype.valueOf ( )</h1>
-        <emu-alg>
-          1. Return ? thisNumberValue(*this* value).
-        </emu-alg>
+      <!-- es6num="20.1.4" -->
+      <emu-clause id="sec-properties-of-number-instances">
+        <h1>Properties of Number Instances</h1>
+        <p>Number instances are ordinary objects that inherit properties from the Number prototype object. Number instances also have a [[NumberData]] internal slot. The [[NumberData]] internal slot is the Number value represented by this Number object.</p>
       </emu-clause>
     </emu-clause>
 
-    <!-- es6num="20.1.4" -->
-    <emu-clause id="sec-properties-of-number-instances">
-      <h1>Properties of Number Instances</h1>
-      <p>Number instances are ordinary objects that inherit properties from the Number prototype object. Number instances also have a [[NumberData]] internal slot. The [[NumberData]] internal slot is the Number value represented by this Number object.</p>
+    <emu-clause id="sec-int64-objects">
+      <h1>Int64 Objects</h1>
+
+      <emu-clause id="sec-int64-constructor">
+        <h1>The Int64 Constructor</h1>
+        <p>The Int64 constructor is the <dfn>%Int64%</dfn> intrinsic object and the initial value of the `Int64` property of the global object. When called as a constructor, it creates and initializes a new Int64 object. When `Int64` is called as a function rather than as a constructor, it performs a type conversion.</p>
+        <p>The `Int64` constructor is designed to be subclassable. It may be used as the value of an `extends` clause of a class definition. Subclass constructors that intend to inherit the specified `Int64` behaviour must include a `super` call to the `Int64` constructor to create and initialize the subclass instance with a [[Int64Data]] internal slot.</p>
+
+        <emu-clause id="sec-int64-constructor-numeric-value">
+          <h1>Int64 ( _value_ )</h1>
+          <p>When `Int64` is called with argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If no arguments were passed to this function invocation, let _n_ be *+0*.
+            1. Else, let _n_ be ? ToNumeric(_value_).
+            1. If NewTarget is *undefined*, return _n_.
+            1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, `"%Int64Prototype%"`, &laquo; [[Int64Data]] &raquo;).
+            1. Set _O_.[[Int64Data]] to _n_.
+            1. Return _O_.
+          </emu-alg>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-the-int64-constructor">
+        <h1>Properties of the Int64 Constructor</h1>
+        <p>The value of the [[Prototype]] internal slot of the Int64 constructor is the intrinsic object %FunctionPrototype%.</p>
+        <p>The Int64 constructor has the following properties:</p>
+
+        <emu-clause id="sec-int64.issafeinteger">
+          <h1>Number.isSafeInteger ( _number_ )</h1>
+          <p>XXXbe When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
+            1. Let _integer_ be ToInteger(_number_).
+            1. If _integer_ is not equal to _number_, return *false*.
+            1. If abs(_integer_) &le; 2<sup>53</sup>-1, return *true*.
+            1. Otherwise, return *false*.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.max_value">
+          <h1>Int64.MAX_VALUE</h1>
+          <p>The value of `Int64.MAX_VALUE` is the greatest positive value of the Int64 type, which is <emu-eqn>2<sup>63</sup>-1</emu-eqn> or `9223372036854775807L`.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.min_value">
+          <h1>Int64.MIN_VALUE</h1>
+          <p>The value of `Int64.MIN_VALUE` is the least negative value of the Int64 type, which is <emu-eqn>-2<sup>63</sup></emu-eqn> or `-9223372036854775808L`.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.parse">
+          <h1>Int64.parse ( _string_, _radix_ )</h1>
+          <p>XXXbe The value of the `Number.parseInt` data property is the same built-in function object that is the value of the `parseInt` property of the global object defined in <emu-xref href="#sec-parseint-string-radix"></emu-xref>.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.prototype">
+          <h1>Int64.prototype</h1>
+          <p>The initial value of `Int64.prototype` is the intrinsic object %Int64Prototype%.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-the-int64-prototype-object">
+        <h1>Properties of the Int64 Prototype Object</h1>
+        <p>The Int64 prototype object is the intrinsic object <dfn>%Int64Prototype%</dfn>. The Int64 prototype object is an ordinary object. The Int64 prototype is itself a Int64 object; it has a [[Int64Data]] internal slot with the value *0L*.</p>
+        <p>The value of the [[Prototype]] internal slot of the Int64 prototype object is the intrinsic object %ObjectPrototype%.</p>
+        <p>Unless explicitly stated otherwise, the methods of the Int64 prototype object defined below are not generic and the *this* value passed to them must be either a Int64 value or an object that has a [[Int64Data]] internal slot that has been initialized to an Int64 value.</p>
+        <p>The abstract operation thisInt64Value(_value_) performs the following steps:</p>
+        <emu-alg>
+          1. If Type(_value_) is Int64, return _value_.
+          1. If Type(_value_) is Object and _value_ has a [[Int64Data]] internal slot, then
+            1. Assert: _value_.[[Int64Data]] is a Int64 value.
+            1. Return _value_.[[Int64Data]].
+          1. Throw a *TypeError* exception.
+        </emu-alg>
+        <p>The phrase &ldquo;this Int64 value&rdquo; within the specification of a method refers to the result returned by calling the abstract operation thisInt64Value with the *this* value of the method invocation passed as the argument.</p>
+
+        <emu-clause id="sec-int64.prototype.constructor">
+          <h1>Int64.prototype.constructor</h1>
+          <p>The initial value of `Int64.prototype.constructor` is the intrinsic object %Int64%.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.prototype.tostring">
+          <h1>Int64.prototype.toString ( [ _radix_ ] )</h1>
+          <emu-note>
+            <p>The optional _radix_ should be an integer value in the inclusive range 2 to 36. If _radix_ not present or is *undefined* the Number 10 is used as the value of _radix_.</p>
+          </emu-note>
+          <p>XXXbe The following steps are performed:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. If _radix_ is not present, let _radixNumber_ be 10.
+            1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
+            1. Else, let _radixNumber_ be ? ToInteger(_radix_).
+            1. If _radixNumber_ &lt; 2 or _radixNumber_ &gt; 36, throw a *RangeError* exception.
+            1. If _radixNumber_ = 10, return ! ToString(_x_).
+            1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
+          </emu-alg>
+          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
+          <p>The `length` property of the `toString` method is 1.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-int64.prototype.valueof">
+          <h1>Int64.prototype.valueOf ( )</h1>
+          <emu-alg>
+            1. Return ? thisInt64Value(*this* value).
+          </emu-alg>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-int64-instances">
+        <h1>Properties of Int64 Instances</h1>
+        <p>Int64 instances are ordinary objects that inherit properties from the Int64 prototype object. Int64 instances also have a [[Int64Data]] internal slot. The [[Int64Data]] internal slot is the Int64 value represented by this Int64 object.</p>
+      </emu-clause>
+    </emu-clause>
+
+    <emu-clause id="sec-uint64-objects">
+      <h1>Uint64 Objects</h1>
+
+      <emu-clause id="sec-uint64-constructor">
+        <h1>The Uint64 Constructor</h1>
+        <p>The Uint64 constructor is the <dfn>%Uint64%</dfn> intrinsic object and the initial value of the `Uint64` property of the global object. When called as a constructor, it creates and initializes a new Uint64 object. When `Uint64` is called as a function rather than as a constructor, it performs a type conversion.</p>
+        <p>The `Uint64` constructor is designed to be subclassable. It may be used as the value of an `extends` clause of a class definition. Subclass constructors that intend to inherit the specified `Uint64` behaviour must include a `super` call to the `Uint64` constructor to create and initialize the subclass instance with a [[Uint64Data]] internal slot.</p>
+
+        <emu-clause id="sec-uint64-constructor-numeric-value">
+          <h1>Uint64 ( _value_ )</h1>
+          <p>When `Uint64` is called with argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If no arguments were passed to this function invocation, let _n_ be *+0*.
+            1. Else, let _n_ be ? ToNumeric(_value_).
+            1. If NewTarget is *undefined*, return _n_.
+            1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, `"%Uint64Prototype%"`, &laquo; [[Uint64Data]] &raquo;).
+            1. Set _O_.[[Uint64Data]] to _n_.
+            1. Return _O_.
+          </emu-alg>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-the-uint64-constructor">
+        <h1>Properties of the Uint64 Constructor</h1>
+        <p>The value of the [[Prototype]] internal slot of the Uint64 constructor is the intrinsic object %FunctionPrototype%.</p>
+        <p>The Uint64 constructor has the following properties:</p>
+
+        <emu-clause id="sec-uint64.issafeinteger">
+          <h1>Number.isSafeInteger ( _number_ )</h1>
+          <p>XXXbe When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
+          <emu-alg>
+            1. If Type(_number_) is not Number, return *false*.
+            1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
+            1. Let _integer_ be ToInteger(_number_).
+            1. If _integer_ is not equal to _number_, return *false*.
+            1. If abs(_integer_) &le; 2<sup>53</sup>-1, return *true*.
+            1. Otherwise, return *false*.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-uint64.max_value">
+          <h1>Uint64.MAX_VALUE</h1>
+          <p>The value of `Uint64.MAX_VALUE` is the greatest value of the Uint64 type, which is <emu-eqn>2<sup>64</sup>-1</emu-eqn> or `18446744073709551615UL`.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-uint64.min_value">
+          <h1>Uint64.MIN_VALUE</h1>
+          <p>The value of `Uint64.MIN_VALUE` is the least value of the Uint64 type, which is `0UL`.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-uint64.parse">
+          <h1>Uint64.parse ( _string_, _radix_ )</h1>
+          <p>XXXbe The value of the `Number.parseInt` data property is the same built-in function object that is the value of the `parseInt` property of the global object defined in <emu-xref href="#sec-parseint-string-radix"></emu-xref>.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-uint64.prototype">
+          <h1>Uint64.prototype</h1>
+          <p>The initial value of `Uint64.prototype` is the intrinsic object %Uint64Prototype%.</p>
+          <p>This property has the attributes { [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }.</p>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-the-uint64-prototype-object">
+        <h1>Properties of the Uint64 Prototype Object</h1>
+        <p>The Uint64 prototype object is the intrinsic object <dfn>%Uint64Prototype%</dfn>. The Uint64 prototype object is an ordinary object. The Uint64 prototype is itself a Uint64 object; it has a [[Uint64Data]] internal slot with the value *0L*.</p>
+        <p>The value of the [[Prototype]] internal slot of the Uint64 prototype object is the intrinsic object %ObjectPrototype%.</p>
+        <p>Unless explicitly stated otherwise, the methods of the Uint64 prototype object defined below are not generic and the *this* value passed to them must be either a Uint64 value or an object that has a [[Uint64Data]] internal slot that has been initialized to an Uint64 value.</p>
+        <p>The abstract operation thisUint64Value(_value_) performs the following steps:</p>
+        <emu-alg>
+          1. If Type(_value_) is Uint64, return _value_.
+          1. If Type(_value_) is Object and _value_ has a [[Uint64Data]] internal slot, then
+            1. Assert: _value_.[[Uint64Data]] is a Uint64 value.
+            1. Return _value_.[[Uint64Data]].
+          1. Throw a *TypeError* exception.
+        </emu-alg>
+        <p>The phrase &ldquo;this Uint64 value&rdquo; within the specification of a method refers to the result returned by calling the abstract operation thisUint64Value with the *this* value of the method invocation passed as the argument.</p>
+
+        <emu-clause id="sec-Uint64.prototype.constructor">
+          <h1>Uint64.prototype.constructor</h1>
+          <p>The initial value of `Uint64.prototype.constructor` is the intrinsic object %Uint64%.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-Uint64.prototype.tostring">
+          <h1>Uint64.prototype.toString ( [ _radix_ ] )</h1>
+          <emu-note>
+            <p>The optional _radix_ should be an integer value in the inclusive range 2 to 36. If _radix_ not present or is *undefined* the Number 10 is used as the value of _radix_.</p>
+          </emu-note>
+          <p>XXXbe The following steps are performed:</p>
+          <emu-alg>
+            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. If _radix_ is not present, let _radixNumber_ be 10.
+            1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
+            1. Else, let _radixNumber_ be ? ToInteger(_radix_).
+            1. If _radixNumber_ &lt; 2 or _radixNumber_ &gt; 36, throw a *RangeError* exception.
+            1. If _radixNumber_ = 10, return ! ToString(_x_).
+            1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
+          </emu-alg>
+          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
+          <p>The `length` property of the `toString` method is 1.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-Uint64.prototype.valueof">
+          <h1>Uint64.prototype.valueOf ( )</h1>
+          <emu-alg>
+            1. Return ? thisUint64Value(*this* value).
+          </emu-alg>
+        </emu-clause>
+      </emu-clause>
+
+      <emu-clause id="sec-properties-of-Uint64-instances">
+        <h1>Properties of Uint64 Instances</h1>
+        <p>Uint64 instances are ordinary objects that inherit properties from the Uint64 prototype object. Uint64 instances also have a [[Uint64Data]] internal slot. The [[Uint64Data]] internal slot is the Uint64 value represented by this Uint64 object.</p>
+      </emu-clause>
     </emu-clause>
   </emu-clause>
 
@@ -36372,6 +36833,10 @@ THH:mm:ss.sss
       <h2>Syntax</h2>
       <emu-grammar>
         NumericLiteral ::
+          NumericLiteralBase
+          NumericLiteralBase NumericLiteralSuffix
+
+        NumericLiteralBase ::
           DecimalLiteral
           BinaryIntegerLiteral
           OctalIntegerLiteral
