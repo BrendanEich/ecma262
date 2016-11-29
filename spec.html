@@ -941,10 +941,169 @@
 
     <emu-clause id="sec-ecmascript-language-types-numeric-types">
       <h1>Numeric Types</h1>
-      <p>ECMAScript has three built-in numeric types: Number, Int64, and Uint64. In this specification, every numeric type _T_ has an additive identity denoted _T_.zero and a multiplicative identity denoted _T_.one.</p>
+      <p>ECMAScript has three built-in numeric types: Number, Int64, and Uint64. In this specification, every numeric type _T_ contains an additive identity value denoted _T_::zero and a multiplicative identity value denoted _T_::unit. The specification types also have the following abstract operations, likewise denoted _T_::<i>op</i> for a given operation with specification name <i>op</i>. Unless noted otherwise, argument and result types are all _T_.</p>
+      <emu-table id="table-numeric-type-ops" caption="Numeric Type Operations">
+        <table>
+          <tbody>
+          <tr>
+            <th>
+              Invocation Synopsis
+            </th>
+            <th>
+              Value and Purpose
+            </th>
+          </tr>
+          <tr>
+            <td>
+              _T_::unaryMinus(x)
+            </td>
+            <td>
+              A specification function invoked when applying the unary minus operator. Called by the semantics of the <emu-xref href="#sec-unary-minus-operator">unary - operator</emu-xref>.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::bitwiseNOT(x)
+            </td>
+            <td>
+              A specification function invoked when applying the bitwise NOT operator. Called by the semantics of the <emu-xref href="#sec-bitwise-not-operator">bitwise NOT operator</emu-xref> for `~x`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::exponentiate(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the exponentiation operator. Called by the semantics of the <emu-xref href="#sec-exp-operator">exponentiation operator</emu-xref> for `x ** y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::multiply(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the multiplication operator. Called by the semantics of the <emu-xref href="#sec-applying-the-mul-operator">`*` operator</emu-xref> for `x * y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::divide(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the division operator. Called by the semantics of the <emu-xref href="#sec-applying-the-div-operator">`/` operator</emu-xref> for `x / y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::remainder(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the truncating remainder ("mod") operator. Called by the semantics of the <emu-xref href="#sec-applying-the-mod-operator">`%` operator</emu-xref> for `x % y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::add(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the addition operator. Called by the semantics of the <emu-xref href="#sec-addition-operator-plus">`+` operator</emu-xref> for `x + y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::subtract(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the subtraction operator. Called by the semantics of the <emu-xref href="#sec-subtraction-operator-minus">`-` operator</emu-xref> for `x - y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::leftShift(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the left shift operator to two operands, the left one of type _T_ and the right one converted from any type into a shift amount. Called by the semantics of the <emu-xref href="#sec-left-shift-operator">`<<` operator</emu-xref> for `x << y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::signedRightShift(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the right shift operator to two operands, the left one of type _T_ and the right one converted from any type into a shift amount. Called by the semantics of the <emu-xref href="#sec-signed-right-shift-operator">`>>` operator</emu-xref> for `x >> y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::unsignedRightShift(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying the right shift operator to two operands, the left one of type _T_ and the right one converted from any type into a shift amount. Called by the semantics of the <emu-xref href="#sec-unsigned-right-shift-operator">`>>>` operator</emu-xref> for `x >>> y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::lessThan(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying one of the four partial-order <emu-xref href="#sec-relational-operators">relational operators</emu-xref>. The return value must be *false*, *true*, or *undefined* (for unordered inputs). Called by the <emu-xref href="#sec-abstract-relational-comparison">Abstract Relational Comparison</emu-xref> algorithm for `x < y`, `x > y`, `x <= y`, and `x >= y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::equal(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-equality-operators">equality operators</emu-xref>. The return value must be *false* or *true*. Called by the <emu-xref href="#sec-strict-equality-comparison">Strict Equality Comparison</emu-xref> algorithm for `x == y`, `x != y`, `x === y`, and `x !== y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::sameValue(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-samevalue">abstract operation SameValue</emu-xref>. The return value must be *false* or *true*. Called from Object internal methods to test exact value equality.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::sameValueZero(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-samevaluezero">abstract operation SameValueZero</emu-xref>. The return value must be *false* or *true*. Called from Array, Map, and Set methods to test value equality ignoring differences among members of the zero cohort (e.g., *-0* and *+0*).
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::bitwiseAND(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-binary-bitwise-operators">binary bitwise AND operator</emu-xref>. Called by the <emu-xref href="#sec-binary-bitwise-operators-runtime-semantics-evaluation">Binary Bitwise Operators</emu-xref> algorithm for `x & y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::bitwiseXOR(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-binary-bitwise-operators">binary bitwise XOR operator</emu-xref>. Called by the <emu-xref href="#sec-binary-bitwise-operators-runtime-semantics-evaluation">Binary Bitwise Operators</emu-xref> algorithm for `x ^ y`.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              _T_::bitwiseOR(x,&nbsp;y)
+            </td>
+            <td>
+              A specification function invoked when applying <emu-xref href="#sec-binary-bitwise-operators">binary bitwise OR operator</emu-xref>. Called by the <emu-xref href="#sec-binary-bitwise-operators-runtime-semantics-evaluation">Binary Bitwise Operators</emu-xref> algorithm for `x | y`.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </emu-table>
+      <p>The _T_::zero value, _T_::unit value, and _T_::_op_ operations are not a part of the ECMAScript language; they are defined here solely to aid the specification of the semantics of the ECMAScript language. Other abstract operations are defined throughout this specification.</p>
       <p>Because the numeric types are in general not interconvertible without loss of precision or truncation, the ECMAScript language provides no implicit conversion among these types. Programmers must explicitly call `Number`, `Int64`, and `Uint64` functions passing parameters of other types.</p>
       <emu-note>
-        <p>The first and subsequent editions of ECMAScript have provided implicit numeric conversions for some operators that could lose precision or truncate. These legacy implicit conversions are maintained for backward compatibility, but not provided for Int64 or Uint64 in order to minimize opportunity for programmer error, and to leave open the option of generalized <em>value types</em> in a future edition.</p>
+        <p>The first and subsequent editions of ECMAScript have provided, for certain operators, implicit numeric conversions that could lose precision or truncate. These legacy implicit conversions are maintained for backward compatibility, but not provided for Int64 or Uint64 in order to minimize opportunity for programmer error, and to leave open the option of generalized <em>value types</em> in a future edition.</p>
       </emu-note>
 
       <!-- es6num="6.1.6" -->
@@ -972,8 +1131,123 @@
 	<p>A finite number has an <em>odd significand</em> if it is nonzero and the integer _m_ used to express it (in one of the two forms shown above) is odd. Otherwise, it has an <em>even significand</em>.</p>
 	<p>In this specification, the phrase &ldquo;the Number value for _x_&rdquo; where _x_ represents an exact nonzero real mathematical quantity (which might even be an irrational number such as &pi;) means a Number value chosen in the following manner. Consider the set of all finite values of the Number type, with *-0* removed and with two additional values added to it that are not representable in the Number type, namely 2<sup>1024</sup> (which is <emu-eqn>+1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>) and <emu-eqn>-2<sup>1024</sup></emu-eqn> (which is <emu-eqn>-1 &times; 2<sup>53</sup> &times; 2<sup>971</sup></emu-eqn>). Choose the member of this set that is closest in value to _x_. If two values of the set are equally close, then the one with an even significand is chosen; for this purpose, the two extra values 2<sup>1024</sup> and <emu-eqn>-2<sup>1024</sup></emu-eqn> are considered to have even significands. Finally, if 2<sup>1024</sup> was chosen, replace it with *+&infin;*; if <emu-eqn>-2<sup>1024</sup></emu-eqn> was chosen, replace it with *-&infin;*; if *+0* was chosen, replace it with *-0* if and only if _x_ is less than zero; any other chosen value is used unchanged. The result is the Number value for _x_. (This procedure corresponds exactly to the behaviour of the IEEE 754-2008 &ldquo;round to nearest, ties to even&rdquo; mode.)</p>
 	<p>Some ECMAScript operators deal only with integers in specific ranges such as <emu-eqn>-2<sup>31</sup></emu-eqn> through <emu-eqn>2<sup>31</sup>-1</emu-eqn>, inclusive, or in the range 0 through <emu-eqn>2<sup>16</sup>-1</emu-eqn>, inclusive. These operators accept any value of the Number type but first convert each such value to an integer value in the expected range. See the descriptions of the numeric conversion operations in <emu-xref href="#sec-type-conversion"></emu-xref>.</p>
-	<p>The Type(Number).zero value is *+0*.</p>
-	<p>The Type(Number).one value is *1*.</p>
+	<p>The Number::zero value is *+0*.</p>
+	<p>The Number::unit value is *1*.</p>
+        <emu-clause id="sec-numeric-types-number-unaryminus">
+          <h1>Number::unaryMinus (_x_)</h1>
+          <p>The abstract operation Number::unaryMinus with an argument _x_ of Number type:</p>
+          <emu-alg>
+            1. If _x_ is *NaN*, return *NaN*.
+            1. Return the result of negating _x_; that is, compute a Number with the same magnitude but opposite sign.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-leftShift">
+          <h1>Number::leftShift (_x_, _y_)</h1>
+          <p>The abstract operation Number::leftShift with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let _lnum_ be ? ToInt32(_x_).
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
+            1. Return the result of left shifting _lnum_ by _shiftCount_ bits. The result is a signed 32-bit integer.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-signedrightshift">
+          <h1>Number::signedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Number::signedRightShift with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let _lnum_ be ? ToInt32(_x_).
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
+            1. Return the result of performing a sign-extending right shift of _lnum_ by _shiftCount_ bits. The most significant bit is propagated. The result is a signed 32-bit integer.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-unsignedrightshift">
+          <h1>Number::unsignedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Number::unsignedRightShift with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let _lnum_ be ? ToUint32(_x_).
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
+            1. Return the result of performing a zero-filling right shift of _lnum_ by _shiftCount_ bits. Vacated bits are filled with zero. The result is an unsigned 32-bit integer.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-lessthan">
+          <h1>Number::lessThan (_x_, _y_)</h1>
+          <p>The abstract operation Number::lessThan with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. If _x_ is *NaN*, return *undefined*.
+            1. If _y_ is *NaN*, return *undefined*.
+            1. If _x_ and _y_ are the same Number value, return *false*.
+            1. If _x_ is *+0* and _y_ is *-0*, return *false*.
+            1. If _x_ is *-0* and _y_ is *+0*, return *false*.
+            1. If _x_ is *+&infin;*, return *false*.
+            1. If _y_ is *+&infin;*, return *true*.
+            1. If _y_ is *-&infin;*, return *false*.
+            1. If _x_ is *-&infin;*, return *true*.
+            1. If the mathematical value of _x_ is less than the mathematical value of _y_ &mdash;note that these mathematical values are both finite and not both zero&mdash;return *true*. Otherwise, return *false*.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-equal">
+          <h1>Number::equal (_x_, _y_)</h1>
+          <p>The abstract operation Number::equal with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. If _x_ is *NaN*, return *false*.
+            1. If _y_ is *NaN*, return *false*.
+            1. If _x_ is the same Number value as _y_, return *true*.
+            1. If _x_ is *+0* and _y_ is *-0*, return *true*.
+            1. If _x_ is *-0* and _y_ is *+0*, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-samevalue">
+          <h1>Number::sameValue (_x_, _y_)</h1>
+          <p>The abstract operation Number::sameValue with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
+            1. If _x_ is *+0* and _y_ is *-0*, return *false*.
+            1. If _x_ is *-0* and _y_ is *+0*, return *false*.
+            1. If _x_ is the same Number value as _y_, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-samevaluezero">
+          <h1>Number::sameValueZero (_x_, _y_)</h1>
+          <p>The abstract operation Number::sameValueZero with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
+            1. If _x_ is *+0* and _y_ is *-0*, return *true*.
+            1. If _x_ is *-0* and _y_ is *+0*, return *true*.
+            1. If _x_ is the same Number value as _y_, return *true*.
+            1. Return *false*.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-bitwiseand">
+          <h1>Number::bitwiseAND (_x_, _y_)</h1>
+          <p>The abstract operation Number::bitwiseAND with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let lnum be ? ToInt32(_x_).
+            1. Let rnum be ? ToInt32(_y_).
+            1. Return the result of applying the bitwise operator & to lnum and rnum. The result is a signed 32 bit integer.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-bitwisexor">
+          <h1>Number::bitwiseXOR (_x_, _y_)</h1>
+          <p>The abstract operation Number::bitwiseXOR with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let lnum be ? ToInt32(_x_).
+            1. Let rnum be ? ToInt32(_y_).
+            1. Return the result of applying the bitwise operator ^ to lnum and rnum. The result is a signed 32 bit integer.
+          </emu-alg>
+        </emu-clause>
+        <emu-clause id="sec-numeric-types-number-bitwiseor">
+          <h1>Number::bitwiseOR (_x_, _y_)</h1>
+          <p>The abstract operation Number::bitwiseOR with two arguments _x_ and _y_ of Number type:</p>
+          <emu-alg>
+            1. Let lnum be ? ToInt32(_x_).
+            1. Let rnum be ? ToInt32(_y_).
+            1. Return the result of applying the bitwise operator | to lnum and rnum. The result is a signed 32 bit integer.
+          </emu-alg>
+        </emu-clause>
       </emu-clause>
 
       <emu-clause id="sec-ecmascript-language-types-int64-type">
@@ -984,8 +1258,8 @@
 	  _s_ &times; _m_ &times; 2<sup>_e_</sup>
 	</div>
 	<p>where _s_ is +1 or -1, _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Int64 type. -9223372036854775808 can also be represented by the Int64 type.</p>
-	<p>The Type(Int64).zero value is *0L*.</p>
-	<p>The Type(Int64).one value is *1L*.</p>
+	<p>The Int64::zero value is *0L*.</p>
+	<p>The Int64::unit value is *1L*.</p>
       </emu-clause>
 
       <emu-clause id="sec-ecmascript-language-types-uint64-type">
@@ -996,8 +1270,8 @@
 	  _m_ &times; 2<sup>_e_</sup>
 	</div>
 	<p>where _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Uint64 type.</p>
-	<p>The Type(Uint64).zero value is *0UL*.</p>
-	<p>The Type(Uint64).one value is *1UL*.</p>
+	<p>The Uint64::zero value is *0UL*.</p>
+	<p>The Uint64::unit value is *1UL*.</p>
       </emu-clause>
     </emu-clause>
 
@@ -1989,6 +2263,28 @@
             </tr>
             <tr>
               <td>
+                %Int64%
+              </td>
+              <td>
+                `Int64`
+              </td>
+              <td>
+                The `Int64` constructor (<emu-xref href="#sec-int64-constructor"></emu-xref>)
+              </td>
+            </tr>
+            <tr>
+              <td>
+                %Int64Prototype%
+              </td>
+              <td>
+                `Int64.prototype`
+              </td>
+              <td>
+                The initial value of the `prototype` property of %Int64%
+              </td>
+            </tr>
+            <tr>
+              <td>
                 %isFinite%
               </td>
               <td>
@@ -2521,6 +2817,28 @@
             </tr>
             <tr>
               <td>
+                %Uint64%
+              </td>
+              <td>
+                `Uint64`
+              </td>
+              <td>
+                The `Uint64` constructor (<emu-xref href="#sec-uint64-constructor"></emu-xref>)
+              </td>
+            </tr>
+            <tr>
+              <td>
+                %Uint64Prototype%
+              </td>
+              <td>
+                `Uint64.prototype`
+              </td>
+              <td>
+                The initial value of the `prototype` property of %Uint64%
+              </td>
+            </tr>
+            <tr>
+              <td>
                 %URIError%
               </td>
               <td>
@@ -3045,7 +3363,7 @@
 <!-- es6num="7" -->
 <emu-clause id="sec-abstract-operations">
   <h1>Abstract Operations</h1>
-  <p>These operations are not a part of the ECMAScript language; they are defined here to solely to aid the specification of the semantics of the ECMAScript language. Other, more specialized abstract operations are defined throughout this specification.</p>
+  <p>These operations are not a part of the ECMAScript language; they are defined here solely to aid the specification of the semantics of the ECMAScript language. Other, more specialized abstract operations are defined throughout this specification.</p>
 
   <!-- es6num="7.1" -->
   <emu-clause id="sec-type-conversion">
@@ -4159,13 +4477,9 @@
       <p>The internal comparison abstract operation SameValue(_x_, _y_), where _x_ and _y_ are ECMAScript language values, produces *true* or *false*. Such a comparison is performed as follows:</p>
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
-        1. If Type(_x_) is Number, then
-          1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
-          1. If _x_ is *+0* and _y_ is *-0*, return *false*.
-          1. If _x_ is *-0* and _y_ is *+0*, return *false*.
-          1. If _x_ is the same Number value as _y_, return *true*.
-          1. Return *false*.
-        1. Return SameValueNonNumber(_x_, _y_).
+        1. If Type(_x_) is Number, Int64, or Uint64, then
+          1. Return Type(_x_)::sameValue(_x_, _y_).
+        1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
         <p>This algorithm differs from the Strict Equality Comparison Algorithm in its treatment of signed zeroes and NaNs.</p>
@@ -4178,24 +4492,20 @@
       <p>The internal comparison abstract operation SameValueZero(_x_, _y_), where _x_ and _y_ are ECMAScript language values, produces *true* or *false*. Such a comparison is performed as follows:</p>
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
-        1. If Type(_x_) is Number, then
-          1. If _x_ is *NaN* and _y_ is *NaN*, return *true*.
-          1. If _x_ is *+0* and _y_ is *-0*, return *true*.
-          1. If _x_ is *-0* and _y_ is *+0*, return *true*.
-          1. If _x_ is the same Number value as _y_, return *true*.
-          1. Return *false*.
-        1. Return SameValueNonNumber(_x_, _y_).
+        1. If Type(_x_) is Number, Int64, or Uint64, then
+          1. Return Type(_x_)::sameValueZero(_x_, _y_).
+        1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
         <p>SameValueZero differs from SameValue only in its treatment of *+0* and *-0*.</p>
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-samevaluenonnumber" aoid="SameValueNonNumber">
-      <h1>SameValueNonNumber ( _x_, _y_ )</h1>
-      <p>The internal comparison abstract operation SameValueNonNumber(_x_, _y_), where neither _x_ nor _y_ are Number values, produces *true* or *false*. Such a comparison is performed as follows:</p>
+    <emu-clause id="sec-samevaluenonnumber" aoid="SameValueNonNumeric">
+      <h1>SameValueNonNumeric ( _x_, _y_ )</h1>
+      <p>The internal comparison abstract operation SameValueNonNumeric(_x_, _y_), where neither _x_ nor _y_ are numeric type values, produces *true* or *false*. Such a comparison is performed as follows:</p>
       <emu-alg>
-        1. Assert: Type(_x_) is not Number.
+        1. Assert: Type(_x_) is not Number, Int64, or Uint64.
         1. Assert: Type(_x_) is the same as Type(_y_).
         1. If Type(_x_) is Undefined, return *true*.
         1. If Type(_x_) is Null, return *true*.
@@ -4228,18 +4538,10 @@
           1. Let _n_ be the integer that is the code unit value at index _k_ within _py_.
           1. If _m_ &lt; _n_, return *true*. Otherwise, return *false*.
         1. Else,
-          1. Let _nx_ be ? ToNumber(_px_). Because _px_ and _py_ are primitive values evaluation order is not important.
-          1. Let _ny_ be ? ToNumber(_py_).
-          1. If _nx_ is *NaN*, return *undefined*.
-          1. If _ny_ is *NaN*, return *undefined*.
-          1. If _nx_ and _ny_ are the same Number value, return *false*.
-          1. If _nx_ is *+0* and _ny_ is *-0*, return *false*.
-          1. If _nx_ is *-0* and _ny_ is *+0*, return *false*.
-          1. If _nx_ is *+&infin;*, return *false*.
-          1. If _ny_ is *+&infin;*, return *true*.
-          1. If _ny_ is *-&infin;*, return *false*.
-          1. If _nx_ is *-&infin;*, return *true*.
-          1. If the mathematical value of _nx_ is less than the mathematical value of _ny_ &mdash;note that these mathematical values are both finite and not both zero&mdash;return *true*. Otherwise, return *false*.
+          1. Let _nx_ be ? ToNumeric(_px_). Because _px_ and _py_ are primitive values evaluation order is not important.
+          1. Let _ny_ be ? ToNumeric(_py_).
+          1. if Type(_nx_) is not Type(_ny_), throw a *TypeError* exception.
+          1. Return Type(_nx_)::lessThan(_nx_, _ny_).
       </emu-alg>
       <emu-note>
         <p>Step 3 differs from step 7 in the algorithm for the addition operator `+` (<emu-xref href="#sec-addition-operator-plus"></emu-xref>) in using &ldquo;and&rdquo; instead of &ldquo;or&rdquo;.</p>
@@ -4274,14 +4576,9 @@
       <p>The comparison _x_ === _y_, where _x_ and _y_ are values, produces *true* or *false*. Such a comparison is performed as follows:</p>
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
-        1. If Type(_x_) is Number, then
-          1. If _x_ is *NaN*, return *false*.
-          1. If _y_ is *NaN*, return *false*.
-          1. If _x_ is the same Number value as _y_, return *true*.
-          1. If _x_ is *+0* and _y_ is *-0*, return *true*.
-          1. If _x_ is *-0* and _y_ is *+0*, return *true*.
-          1. Return *false*.
-        1. Return SameValueNonNumber(_x_, _y_).
+        1. If Type(_x_) is Number, Int64, or Uint64, then
+          1. Return Type(_x_)::equal(_x_, _y_).
+        1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
         <p>This algorithm differs from the SameValue Algorithm in its treatment of signed zeroes and NaNs.</p>
@@ -12430,7 +12727,7 @@
         <emu-alg>
           1. Let _lhs_ be the result of evaluating |LeftHandSideExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_lhs_)).
-          1. Let _newValue_ be the result of adding Type(_oldValue_).one to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _newValue_ be the result of adding Type(_oldValue_)::unit to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_lhs_, _newValue_).
           1. Return _oldValue_.
         </emu-alg>
@@ -12448,7 +12745,7 @@
         <emu-alg>
           1. Let _lhs_ be the result of evaluating |LeftHandSideExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_lhs_)).
-          1. Let _newValue_ be the result of subtracting Type(_oldValue_).one from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _newValue_ be the result of subtracting Type(_oldValue_)::unit from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_lhs_, _newValue_).
           1. Return _oldValue_.
         </emu-alg>
@@ -12466,7 +12763,7 @@
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
-          1. Let _newValue_ be the result of adding Type(_oldValue_).one to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _newValue_ be the result of adding Type(_oldValue_)::unit to _oldValue_, using the same rules as for the `+` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_expr_, _newValue_).
           1. Return _newValue_.
         </emu-alg>
@@ -12484,7 +12781,7 @@
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
-          1. Let _newValue_ be the result of subtracting Type(_oldValue_).one from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
+          1. Let _newValue_ be the result of subtracting Type(_oldValue_)::unit from _oldValue_, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
           1. Perform ? PutValue(_expr_, _newValue_).
           1. Return _newValue_.
         </emu-alg>
@@ -12785,10 +13082,7 @@
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
-          1. If Type(_oldValue_) is Int64 or Uint64, then
-            1. Return the result of subtracting _oldValue_ from Type(_oldValue_).zero, using the same rules as for the `-` operator (see <emu-xref href="#sec-applying-the-additive-operators-to-numbers"></emu-xref>).
-          1. If _oldValue_ is *NaN*, return *NaN*.
-          1. Return the result of negating _oldValue_; that is, compute a Number with the same magnitude but opposite sign.
+          1. Return Type(_oldValue_)::unaryMinus(_oldValue_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13244,10 +13538,8 @@
           1. Let _lval_ be ? GetValue(_lref_).
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
-          1. Let _lnum_ be ? ToInt32(_lval_).
-          1. Let _rnum_ be ? ToUint32(_rval_).
-          1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
-          1. Return the result of left shifting _lnum_ by _shiftCount_ bits. The result is a signed 32-bit integer.
+          1. Let _lnum_ be ? ToNumeric(_lval_).
+          1. Return Type(_lnum_)::leftShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13268,10 +13560,8 @@
           1. Let _lval_ be ? GetValue(_lref_).
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
-          1. Let _lnum_ be ? ToInt32(_lval_).
-          1. Let _rnum_ be ? ToUint32(_rval_).
-          1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
-          1. Return the result of performing a sign-extending right shift of _lnum_ by _shiftCount_ bits. The most significant bit is propagated. The result is a signed 32-bit integer.
+          1. Let _lnum_ be ? ToNumeric(_lval_).
+          1. Return Type(_lnum_)::signedRightShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13292,10 +13582,8 @@
           1. Let _lval_ be ? GetValue(_lref_).
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
-          1. Let _lnum_ be ? ToUint32(_lval_).
-          1. Let _rnum_ be ? ToUint32(_rval_).
-          1. Let _shiftCount_ be the result of masking out all but the least significant 5 bits of _rnum_, that is, compute _rnum_ &amp; 0x1F.
-          1. Return the result of performing a zero-filling right shift of _lnum_ by _shiftCount_ bits. Vacated bits are filled with zero. The result is an unsigned 32-bit integer.
+          1. Let _lnum_ be ? ToNumeric(_lval_).
+          1. Return Type(_lnum_)::unsignedRightShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13624,9 +13912,11 @@
         1. Let _lval_ be ? GetValue(_lref_).
         1. Let _rref_ be the result of evaluating _B_.
         1. Let _rval_ be ? GetValue(_rref_).
-        1. Let _lnum_ be ? ToInt32(_lval_).
-        1. Let _rnum_ be ? ToInt32(_rval_).
-        1. Return the result of applying the bitwise operator @ to _lnum_ and _rnum_. The result is a signed 32 bit integer.
+        1. Let _lnum_ be ? ToNumeric(_lval_).
+        1. if @ is |, return Type(_lnum_)::bitwiseOR(_lnum_, _rval_).
+        1. if @ is ^, return Type(_lnum_)::bitwiseXOR(_lnum_, _rval_).
+        1. Assert @ is &amp;.
+        1. Return Type(_lnum_)::bitwiseAND(_lnum_, _rval_).
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -25093,10 +25383,10 @@
         <p>The Int64 constructor has the following properties:</p>
 
         <emu-clause id="sec-int64.issafeinteger">
-          <h1>Number.isSafeInteger ( _number_ )</h1>
-          <p>XXXbe When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
+          <h1>Int64.isSafeInteger ( _number_ )</h1>
+          <p>XXXbe When the `Int64.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
           <emu-alg>
-            1. If Type(_number_) is not Number, return *false*.
+            1. If Type(_number_) is not Int64, return *false*.
             1. If _number_ is *NaN*, *+&infin;*, or *-&infin;*, return *false*.
             1. Let _integer_ be ToInteger(_number_).
             1. If _integer_ is not equal to _number_, return *false*.
@@ -25156,7 +25446,7 @@
           </emu-note>
           <p>XXXbe The following steps are performed:</p>
           <emu-alg>
-            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. Let _x_ be ? thisInt64Value(*this* value).
             1. If _radix_ is not present, let _radixNumber_ be 10.
             1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
             1. Else, let _radixNumber_ be ? ToInteger(_radix_).
@@ -25164,7 +25454,7 @@
             1. If _radixNumber_ = 10, return ! ToString(_x_).
             1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
           </emu-alg>
-          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
+          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Int64 or an Int64 object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
           <p>The `length` property of the `toString` method is 1.</p>
         </emu-clause>
 
@@ -25210,7 +25500,7 @@
         <p>The Uint64 constructor has the following properties:</p>
 
         <emu-clause id="sec-uint64.issafeinteger">
-          <h1>Number.isSafeInteger ( _number_ )</h1>
+          <h1>Uint64.isSafeInteger ( _number_ )</h1>
           <p>XXXbe When the `Number.isSafeInteger` is called with one argument _number_, the following steps are taken:</p>
           <emu-alg>
             1. If Type(_number_) is not Number, return *false*.
@@ -25273,15 +25563,15 @@
           </emu-note>
           <p>XXXbe The following steps are performed:</p>
           <emu-alg>
-            1. Let _x_ be ? thisNumberValue(*this* value).
+            1. Let _x_ be ? thisUint64Value(*this* value).
             1. If _radix_ is not present, let _radixNumber_ be 10.
             1. Else if _radix_ is *undefined*, let _radixNumber_ be 10.
             1. Else, let _radixNumber_ be ? ToInteger(_radix_).
             1. If _radixNumber_ &lt; 2 or _radixNumber_ &gt; 36, throw a *RangeError* exception.
             1. If _radixNumber_ = 10, return ! ToString(_x_).
-            1. Return the String representation of this Number value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
+            1. Return the String representation of this Uint64 value using the radix specified by _radixNumber_. Letters `a`-`z` are used for digits with values 10 through 35. The precise algorithm is implementation-dependent, however the algorithm should be a generalization of that specified in <emu-xref href="#sec-tostring-applied-to-the-number-type"></emu-xref>.
           </emu-alg>
-          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Number or a Number object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
+          <p>The `toString` function is not generic; it throws a *TypeError* exception if its *this* value is not a Uint64 or an Uint64 object. Therefore, it cannot be transferred to other kinds of objects for use as a method.</p>
           <p>The `length` property of the `toString` method is 1.</p>
         </emu-clause>
 
@@ -32790,7 +33080,7 @@ THH:mm:ss.sss
 
 <!-- es6num="23" -->
 <emu-clause id="sec-keyed-collection">
-  <h1>Keyed Collection</h1>
+  <h1>Keyed Collections</h1>
 
   <!-- es6num="23.1" -->
   <emu-clause id="sec-map-objects">
