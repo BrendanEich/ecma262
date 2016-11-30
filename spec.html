@@ -1273,7 +1273,7 @@
 
         <emu-clause id="sec-numeric-types-number-add">
           <h1>Number::add (_x_, _y_)</h1>
-          <p>The result of an addition is determined using the rules of IEEE 754-2008 binary double-precision arithmetic:</p>
+          <p>The result of Number addition is determined using the rules of IEEE 754-2008 binary double-precision arithmetic:</p>
           <ul>
             <li>
               If either operand is *NaN*, the result is *NaN*.
@@ -1441,6 +1441,121 @@
 	<p>where _s_ is +1 or -1, _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Int64 type. -9223372036854775808 can also be represented by the Int64 type.</p>
 	<p>The Int64::zero value is *0L*.</p>
 	<p>The Int64::unit value is *1L*.</p>
+
+        <emu-clause id="sec-numeric-types-int64-unaryMinus">
+          <h1>Int64::unaryMinus (_x_)</h1>
+          <p>The abstract operation Int64::unaryMinus with an argument _x_ of Int64 type returns the two's complement of _x_ as a 64-bit signed integer.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-bitwiseNOT">
+          <h1>Int64::bitwiseNOT (_x_)</h1>
+          <p>The abstract operation Int64::bitwiseNOT with an argument _x_ of Int64 type returns the one's complement of _x_ as a 64-bit signed integer.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-exponentiate">
+          <h1>Int64::exponentiate (_base_, _exponent_)</h1>
+          <p>The abstract operation Int64::exponentiate with two arguments _base_ and _exponent_ of Int64 type returns an implementation-dependent signed 64-bit integer approximation of the result of raising _base_ to the power _exponent_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-multiply">
+          <h1>Int64::multiply (_x_, _y_)</h1>
+          <p>The abstract operation Int64::multiply with two arguments _x_ and _y_ of Int64 type returns the signed 64-bit integer result of multiplying _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-divide">
+          <h1>Int64::divide (_x_, _y_)</h1>
+          <p>The abstract operation Int64::divide with two arguments _x_ and _y_ of Int64 type returns the signed 64-bit integer quotient of _x_ divided by _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-remainder">
+          <h1>Int64::remainder (_x_, _y_)</h1>
+          <p>Return a 64-bit signed integer result with value _x_ - _i_ * _y_ for some Int64 _i_ such that, if _y_ is non-zero, the result has the same sign as _x_ and is less than _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-add">
+          <h1>Int64::add (_x_, _y_)</h1>
+          <p>The abstract operation Int64::divide with two arguments _x_ and _y_ of Int64 type returns the signed 64-bit integer sum of _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-subtract">
+          <h1>Int64::subtract (_x_, _y_)</h1>
+          <p>The abstract operation Int64::divide with two arguments _x_ and _y_ of Int64 type returns the signed 64-bit integer sum of _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-leftShift">
+          <h1>Int64::leftShift (_x_, _y_)</h1>
+          <p>The abstract operation Int64::leftShift with arguments _x_ of Int64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of left shifting _lnum_ by _shiftCount_ bits. The result is a signed 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-signedRightShift">
+          <h1>Int64::signedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Int64::signedRightShift with arguments _x_ of Int64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of performing a sign-extending right shift of _lnum_ by _shiftCount_ bits. The most significant bit is propagated. The result is a signed 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-unsignedRightShift">
+          <h1>Int64::unsignedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Int64::unsignedRightShift with two arguments _x_ of Int64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of performing a zero-filling right shift of _lnum_ by _shiftCount_ bits. Vacated bits are filled with zero. The result is an unsigned 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-lessThan">
+          <h1>Int64::lessThan (_x_, _y_)</h1>
+          <p>The abstract operation Int64::lessThan with two arguments _x_ and _y_ of Int64 type returns *true* if _x_ is less than _y_ and *false* otherwise.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-equal">
+          <h1>Int64::equal (_x_, _y_)</h1>
+          <p>The abstract operation Int64::equal with two arguments _x_ and _y_ of Int64 type returns *true* if _x_ and _y_ are the same 64-bit integer and *false* otherwise.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-sameValue">
+          <h1>Int64::sameValue (_x_, _y_)</h1>
+          <p>The abstract operation Int64::sameValue with two arguments _x_ and _y_ of Int64 type:</p>
+          <emu-alg>
+            1. Return Int64::equal(_x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-sameValueZero">
+          <h1>Int64::sameValueZero (_x_, _y_)</h1>
+          <p>The abstract operation Int64::sameValueZero with two arguments _x_ and _y_ of Int64 type:</p>
+          <emu-alg>
+            1. Return Int64::equal(_x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-bitwiseAND">
+          <h1>Int64::bitwiseAND (_x_, _y_)</h1>
+          <p>The abstract operation Int64::bitwiseAND with two arguments _x_ and _y_ of Int64 type returns the result of applying the bitwise operator &amp; to _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-bitwiseXOR">
+          <h1>Int64::bitwiseXOR (_x_, _y_)</h1>
+          <p>The abstract operation Int64::bitwiseXOR with two arguments _x_ and _y_ of Int64 type returns the result of applying the bitwise operator ^ to _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-int64-bitwiseOR">
+          <h1>Int64::bitwiseOR (_x_, _y_)</h1>
+          <p>The abstract operation Int64::bitwiseOR with two arguments _x_ and _y_ of Int64 type returns the result of applying the bitwise operator | to _x_ and _y_.</p>
+          </emu-alg>
+        </emu-clause>
       </emu-clause>
 
       <emu-clause id="sec-ecmascript-language-types-uint64-type">
@@ -1453,6 +1568,121 @@
 	<p>where _m_ is a nonnegative integer less than 2<sup>53</sup>, and _e_ is an integer ranging from 0 to 11, inclusive, can be represented by the Uint64 type.</p>
 	<p>The Uint64::zero value is *0UL*.</p>
 	<p>The Uint64::unit value is *1UL*.</p>
+
+        <emu-clause id="sec-numeric-types-uint64-unaryMinus">
+          <h1>Uint64::unaryMinus (_x_)</h1>
+          <p>The abstract operation Uint64::unaryMinus with an argument _x_ of Uint64 type returns the two's complement of _x_ as a 64-bit unsigned integer.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-bitwiseNOT">
+          <h1>Uint64::bitwiseNOT (_x_)</h1>
+          <p>The abstract operation Uint64::bitwiseNOT with an argument _x_ of Uint64 type returns the one's complement of _x_ as a 64-bit unsigned integer.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-exponentiate">
+          <h1>Uint64::exponentiate (_base_, _exponent_)</h1>
+          <p>The abstract operation Uint64::exponentiate with two arguments _base_ and _exponent_ of Uint64 type returns an implementation-dependent unsigned 64-bit integer approximation of the result of raising _base_ to the power _exponent_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-multiply">
+          <h1>Uint64::multiply (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::multiply with two arguments _x_ and _y_ of Uint64 type returns the unsigned 64-bit integer result of multiplying _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-divide">
+          <h1>Uint64::divide (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::divide with two arguments _x_ and _y_ of Uint64 type returns the unsigned 64-bit integer quotient of _x_ divided by _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-remainder">
+          <h1>Uint64::remainder (_x_, _y_)</h1>
+          <p>Return a 64-bit unsigned integer result with value _x_ - _u_ * _y_ for some Uint64 _u_ such that, if _y_ is non-zero, the result is less than _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-add">
+          <h1>Uint64::add (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::divide with two arguments _x_ and _y_ of Uint64 type returns the unsigned 64-bit integer sum of _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-subtract">
+          <h1>Uint64::subtract (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::divide with two arguments _x_ and _y_ of Uint64 type returns the unsigned 64-bit integer sum of _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-leftShift">
+          <h1>Uint64::leftShift (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::leftShift with arguments _x_ of Uint64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of left shifting _lnum_ by _shiftCount_ bits. The result is a unsigned 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-signedRightShift">
+          <h1>Uint64::signedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::signedRightShift with arguments _x_ of Uint64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of performing a sign-extending right shift of _lnum_ by _shiftCount_ bits. The most significant bit is propagated. The result is a unsigned 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-unsignedRightShift">
+          <h1>Uint64::unsignedRightShift (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::unsignedRightShift with two arguments _x_ of Uint64 type and _y_ of any type:</p>
+          <emu-alg>
+            1. Let _lnum_ be _x_.
+            1. Let _rnum_ be ? ToUint32(_y_).
+            1. Let _shiftCount_ be the result of masking out all but the least significant 6 bits of _rnum_, that is, compute _rnum_ &amp; 0x3F.
+            1. Return the result of performing a zero-filling right shift of _lnum_ by _shiftCount_ bits. Vacated bits are filled with zero. The result is an unsigned 64-bit integer.
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-lessThan">
+          <h1>Uint64::lessThan (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::lessThan with two arguments _x_ and _y_ of Uint64 type returns *true* if _x_ is less than _y_ and *false* otherwise.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-equal">
+          <h1>Uint64::equal (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::equal with two arguments _x_ and _y_ of Uint64 type returns *true* if _x_ and _y_ are the same 64-bit integer and *false* otherwise.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-sameValue">
+          <h1>Uint64::sameValue (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::sameValue with two arguments _x_ and _y_ of Uint64 type:</p>
+          <emu-alg>
+            1. Return Uint64::equal(_x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-sameValueZero">
+          <h1>Uint64::sameValueZero (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::sameValueZero with two arguments _x_ and _y_ of Uint64 type:</p>
+          <emu-alg>
+            1. Return Uint64::equal(_x_, _y_).
+          </emu-alg>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-bitwiseAND">
+          <h1>Uint64::bitwiseAND (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::bitwiseAND with two arguments _x_ and _y_ of Uint64 type returns the result of applying the bitwise operator &amp; to _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-bitwiseXOR">
+          <h1>Uint64::bitwiseXOR (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::bitwiseXOR with two arguments _x_ and _y_ of Uint64 type returns the result of applying the bitwise operator ^ to _x_ and _y_.</p>
+        </emu-clause>
+
+        <emu-clause id="sec-numeric-types-uint64-bitwiseOR">
+          <h1>Uint64::bitwiseOR (_x_, _y_)</h1>
+          <p>The abstract operation Uint64::bitwiseOR with two arguments _x_ and _y_ of Uint64 type returns the result of applying the bitwise operator | to _x_ and _y_.</p>
+          </emu-alg>
+        </emu-clause>
       </emu-clause>
     </emu-clause>
 
@@ -4659,7 +4889,7 @@
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
         1. If Type(_x_) is Number, Int64, or Uint64, then
-          1. Return Type(_x_)::sameValue(_x_, _y_).
+          1. Return ? Type(_x_)::sameValue(_x_, _y_).
         1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
@@ -4674,7 +4904,7 @@
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
         1. If Type(_x_) is Number, Int64, or Uint64, then
-          1. Return Type(_x_)::sameValueZero(_x_, _y_).
+          1. Return ? Type(_x_)::sameValueZero(_x_, _y_).
         1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
@@ -4722,7 +4952,7 @@
           1. Let _nx_ be ? ToNumeric(_px_). Because _px_ and _py_ are primitive values evaluation order is not important.
           1. Let _ny_ be ? ToNumeric(_py_).
           1. if Type(_nx_) is not Type(_ny_), throw a *TypeError* exception.
-          1. Return Type(_nx_)::lessThan(_nx_, _ny_).
+          1. Return ? Type(_nx_)::lessThan(_nx_, _ny_).
       </emu-alg>
       <emu-note>
         <p>Step 3 differs from step 7 in the algorithm for the addition operator `+` (<emu-xref href="#sec-addition-operator-plus"></emu-xref>) in using &ldquo;and&rdquo; instead of &ldquo;or&rdquo;.</p>
@@ -4758,7 +4988,7 @@
       <emu-alg>
         1. If Type(_x_) is different from Type(_y_), return *false*.
         1. If Type(_x_) is Number, Int64, or Uint64, then
-          1. Return Type(_x_)::equal(_x_, _y_).
+          1. Return ? Type(_x_)::equal(_x_, _y_).
         1. Return SameValueNonNumeric(_x_, _y_).
       </emu-alg>
       <emu-note>
@@ -13263,7 +13493,7 @@
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
-          1. Return Type(_oldValue_)::unaryMinus(_oldValue_).
+          1. Return ? Type(_oldValue_)::unaryMinus(_oldValue_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13279,7 +13509,7 @@
         <emu-alg>
           1. Let _expr_ be the result of evaluating |UnaryExpression|.
           1. Let _oldValue_ be ? ToNumeric(? GetValue(_expr_)).
-          1. Return Type(_oldValue_)::bitwiseNOT(_oldValue_).
+          1. Return ? Type(_oldValue_)::bitwiseNOT(_oldValue_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13411,7 +13641,7 @@
         <p>The `*` |MultiplicativeOperator| performs multiplication, producing the product of its operands _x_ and _y_. Multiplication is commutative. Multiplication is not always associative in ECMAScript, because of finite precision.</p>
         <emu-alg>
           1. Assert Type(_x_) is Type(_y_).
-          1. Return Type(_x_)::multiply(_x_, _y_).
+          1. Return ? Type(_x_)::multiply(_x_, _y_).
         </emu-alg>
       </emu-clause>
 
@@ -13421,7 +13651,7 @@
         <p>The `/` |MultiplicativeOperator| performs division, producing the quotient of its operands. The left operand is the _dividend_ and the right operand is the _divisor_.</p>
         <emu-alg>
           1. Assert Type(_dividend_) is Type(_divisor_).
-          1. Return Type(_dividend_)::divide(_dividend_, _divisor_).
+          1. Return ? Type(_dividend_)::divide(_dividend_, _divisor_).
         </emu-alg>
       </emu-clause>
 
@@ -13434,7 +13664,7 @@
         </emu-note>
         <emu-alg>
           1. Assert Type(_dividend_) is Type(_divisor_).
-          1. Return Type(_dividend_)::remainder(_dividend_, _divisor_).
+          1. Return ? Type(_dividend_)::remainder(_dividend_, _divisor_).
         </emu-alg>
       </emu-clause>
 
@@ -13445,7 +13675,7 @@
         </p>
         <emu-alg>
           1. Assert Type(_base_) is Type(_exponent_).
-          1. Return Type(_base_)::exponentiate(_base_, _exponent_).
+          1. Return ? Type(_base_)::exponentiate(_base_, _exponent_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13554,12 +13784,12 @@
       <p>Addition is a commutative operation, but not always associative.</p>
       <emu-alg>
         1. Assert Type(_x_) is Type(_y_).
-        1. Return Type(_x_)::add(_x_, _y_).
+        1. Return ? Type(_x_)::add(_x_, _y_).
       </emu-alg>
       <p>The `-` operator performs subtraction, producing the difference of two numeric operands _x_ and _y_.</p>
       <emu-alg>
         1. Assert Type(_x_) is Type(_y_).
-        1. Return Type(_x_)::subtract(_x_, _y_).
+        1. Return ? Type(_x_)::subtract(_x_, _y_).
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -13623,7 +13853,7 @@
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
           1. Let _lnum_ be ? ToNumeric(_lval_).
-          1. Return Type(_lnum_)::leftShift(_lnum_, _rval_).
+          1. Return ? Type(_lnum_)::leftShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13645,7 +13875,7 @@
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
           1. Let _lnum_ be ? ToNumeric(_lval_).
-          1. Return Type(_lnum_)::signedRightShift(_lnum_, _rval_).
+          1. Return ? Type(_lnum_)::signedRightShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13667,7 +13897,7 @@
           1. Let _rref_ be the result of evaluating |AdditiveExpression|.
           1. Let _rval_ be ? GetValue(_rref_).
           1. Let _lnum_ be ? ToNumeric(_lval_).
-          1. Return Type(_lnum_)::unsignedRightShift(_lnum_, _rval_).
+          1. Return ? Type(_lnum_)::unsignedRightShift(_lnum_, _rval_).
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13997,10 +14227,10 @@
         1. Let _rref_ be the result of evaluating _B_.
         1. Let _rval_ be ? GetValue(_rref_).
         1. Let _lnum_ be ? ToNumeric(_lval_).
-        1. If @ is &amp;, return Type(_lnum_)::bitwiseAND(_lnum_, _rval_).
-        1. If @ is ^, return Type(_lnum_)::bitwiseXOR(_lnum_, _rval_).
+        1. If @ is &amp;, return ? Type(_lnum_)::bitwiseAND(_lnum_, _rval_).
+        1. If @ is ^, return ? Type(_lnum_)::bitwiseXOR(_lnum_, _rval_).
         1. Assert @ is |.
-        1. Return Type(_lnum_)::bitwiseOR(_lnum_, _rval_).
+        1. Return ? Type(_lnum_)::bitwiseOR(_lnum_, _rval_).
       </emu-alg>
     </emu-clause>
   </emu-clause>
@@ -25072,7 +25302,7 @@
 
   <emu-clause id="sec-numeric-objects">
     <h1>Numeric Objects</h1>
-    <p>XXXbe</p>
+    <p>The numeric types Number, Int64, and Uint64 specify primitive types in the ECMAScript language. As with other primitive types, each has a corresponding Object type used to create wrappers for its primitive values, so that those values can be used as objects (e.g., as the target of a prototype-based method invocation).</p>
 
     <!-- es6num="20.1" -->
     <emu-clause id="sec-number-objects">
